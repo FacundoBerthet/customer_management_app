@@ -1,18 +1,6 @@
 package com.example.customer_management_app;
 
-import org.springframework.beans.factory.annotation.Autowired;// Iportar la anotación @Autowired para inyección de dependencias
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired; // Importar la anotación @Autowired para inyección de dependencias
 import org.springframework.http.HttpStatus; // Importar HttpStatus para manejar códigos de estado HTTP
 import org.springframework.http.ResponseEntity; // Importar ResponseEntity para respuestas HTTP
 import org.springframework.web.bind.annotation.*; // Importar anotaciones de controlador REST
