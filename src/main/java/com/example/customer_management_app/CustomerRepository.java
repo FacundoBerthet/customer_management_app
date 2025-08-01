@@ -19,6 +19,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
   List<Customer> findByLastNameContaining(String lastName); // Búsqueda que contenga (LIKE %texto%)
   List<Customer> findByFirstNameIgnoreCase(String firstName); // Búsqueda que ignore mayúsculas/minúsculas
   List<Customer> findByFirstNameContainingAndLastNameContaining(String firstName, String lastName);// Búsqueda por múltiples criterios
+  List<Customer> findByFirstNameContainingOrLastNameContaining(String firstName, String lastName); // Búsqueda por nombre o apellido
   boolean existsByEmail(String email);// Verificar si existe
   long countByLastName(String lastName);// Contar registros
 
