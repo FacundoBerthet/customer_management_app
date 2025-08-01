@@ -42,7 +42,18 @@ public class Customer {
   protected Customer() {}
 
 
-  // CONSTRUCTOR PUBLICO
+  // CONSTRUCTOR CON 3 PARÁMETROS (nombre, apellido, email)
+  public Customer(String firstName, String lastName, String email) {
+    this.firstName = firstName; // Asigna el nombre recibido al campo firstName
+    this.lastName = lastName;   // Asigna el apellido recibido al campo lastName
+    this.email = email;         // Asigna el email recibido al campo email
+    this.phone = null;          // Teléfono queda como null (opcional)
+    this.address = null;        // Dirección queda como null (opcional)
+    this.createdAt = LocalDateTime.now(); // Asigna la fecha actual al campo createdAt
+    this.updatedAt = LocalDateTime.now(); // Asigna la fecha actual al campo updatedAt
+  }
+
+  // CONSTRUCTOR CON 5 PARÁMETROS (todos los campos)
   public Customer(String firstName, String lastName, String email, String phone, String address) {
     this.firstName = firstName; // Asigna el nombre recibido al campo firstName
     this.lastName = lastName;   // Asigna el apellido recibido al campo lastName
