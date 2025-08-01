@@ -18,6 +18,14 @@ import jakarta.persistence.Column;
 // Importa la clase LocalDateTime para manejar fechas y horas
 import java.time.LocalDateTime;
 
+// Importa las anotaciones de validación
+import jakarta.validation.constraints.NotBlank;
+
+// Importan las anotaciones de validación para email, tamaño y patrón
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+
 
 @Entity // Marca esta clase como una entidad JPA - se mapeará a una tabla en la base de datos
 public class Customer {
@@ -26,12 +34,31 @@ public class Customer {
   @Id // Marca este campo como la clave primaria de la tabla
   @GeneratedValue(strategy=GenerationType.AUTO) // Configura la generación automática del ID - JPA elegirá la mejor estrategia
   private Long id; // Campo para almacenar el ID único del cliente (clave primaria)
-  private String firstName; 
-  private String lastName;  
+
+  // Validaciones para firstName y lastName
+  @NotBlank(message = "First name is required") // El nombre no puede estar vacío
+  @Size(min = 2, max = 40, message = "First name must be between 2 and 40 characters")
+  private String firstName;
+
+  @NotBlank(message = "Last name is required") // El apellido no puede estar vacío
+  @Size(min = 2, max = 40, message = "Last name must be between 2 and 40 characters")
+  private String lastName;
+
+  // Validaciones para email
+  @NotBlank(message = "Email is required") // El email no puede estar vacío
+  @Email(message = "Email must be valid (example@example.com)") // El email debe ser válido
   @Column(unique = true) // Email debe ser único
   private String email;
+
+  // Validacion para phone
+  @Pattern(regexp = "^$|^\\d{3}-\\d{4}$", 
+           message = "The phone must be in the format XXX-XXXX or empty")
   private String phone;
+
+  // Validación para address
+  @Size(max = 100, message = "Address must be less than 100 characters")
   private String address;
+
   @Column(name = "created_at") // Nombre de la columna en la base de datos
   private LocalDateTime createdAt; // Fecha de creación del registro
   @Column(name = "updated_at") // Nombre de la columna en la base de datos
@@ -67,6 +94,14 @@ public class Customer {
 
   // METODOS 
 
+  // isValid() - Método para validar el objeto Customer
+  public boolean isValid() {
+    // Verifica que los campos firstName, lastName y email no sean nulos ni vacíos
+    return firstName != null && !firstName.trim().isEmpty() &&
+           lastName != null && !lastName.trim().isEmpty() &&
+           email != null && email.contains("@");
+  }
+  
   // Sobrescribe el método toString() para representar el objeto como String legible
   @Override
   public String toString() {
