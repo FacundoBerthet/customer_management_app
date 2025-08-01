@@ -6,13 +6,21 @@ import org.springframework.http.ResponseEntity; // Importar ResponseEntity para 
 import org.springframework.web.bind.annotation.*; // Importar anotaciones de controlador REST
 import jakarta.validation.Valid; // Importar la anotación @Valid para validación de datos
 
+import org.springframework.boot.SpringApplication; // Importar SpringApplication para iniciar la aplicación
+import org.springframework.boot.autoconfigure.SpringBootApplication; // Importar la anotación @SpringBootApplication para marcar la clase principal de la aplicación
+
 import java.util.List; // Importar la clase List
 import java.util.Optional; // Importar la clase Optional
 
-
+@SpringBootApplication // Marca esta como aplicación Spring Boot principal
 @RestController // Marca esta clase como un controlador REST
 @RequestMapping("/api/customers") // Define la ruta base para las operaciones de cliente
 public class CustomerManagementAPP {
+
+  // Método main para ejecutar la aplicación
+  public static void main(String[] args) {
+    SpringApplication.run(CustomerManagementAPP.class, args);
+  }
 
   @Autowired // Inyecta automaticamente el CustomerRepository
   private CustomerRepository customerRepository;
