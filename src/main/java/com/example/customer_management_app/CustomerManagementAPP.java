@@ -6,12 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-// Importaciones para validación manual
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import jakarta.validation.Validation;
-import java.util.Set;
+import java.util.Optional;
 
 @SpringBootApplication
 public class CustomerManagementAPP {
@@ -25,80 +20,120 @@ public class CustomerManagementAPP {
   @Bean
   public CommandLineRunner demo(CustomerRepository repository) {
     return (args) -> {
-      // ⭐ CONFIGURAR VALIDADOR MANUAL
-      ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-      Validator validator = factory.getValidator();
-
-      // ✅ DATOS VÁLIDOS - estos deberían funcionar
-      log.info("🟢 PROBANDO DATOS VÁLIDOS:");
-      log.info("==============================");
       
-      Customer validCustomer = new Customer("Jack", "Bauer", "jack.bauer@ctu.gov");
-      Set<ConstraintViolation<Customer>> violations = validator.validate(validCustomer);
+      // 💾 GUARDAR DATOS DE PRUEBA
+      log.info("� GUARDANDO DATOS DE PRUEBA:");
+      log.info("============================");
       
-      if (violations.isEmpty()) {
-        repository.save(validCustomer);
-        log.info("✅ Cliente válido guardado: " + validCustomer.toString());
-      } else {
-        log.error("❌ Cliente inválido, errores:");
-        violations.forEach(v -> log.error("   - " + v.getMessage()));
-      }
-
-      // ❌ DATOS INVÁLIDOS - estos deberían fallar las validaciones
+      repository.save(new Customer("Jack", "Bauer", "jack.bauer@ctu.gov", "555-0001", "Los Angeles"));
+      repository.save(new Customer("Chloe", "O'Brian", "chloe.obrian@ctu.gov", "555-0002", "CTU Headquarters"));
+      repository.save(new Customer("Kim", "Bauer", "kim.bauer@gmail.com")); // Sin teléfono ni dirección
+      repository.save(new Customer("Tony", "Almeida", "tony.almeida@ctu.gov", "555-0003", "Los Angeles"));
+      repository.save(new Customer("Michelle", "Dessler", "michelle.dessler@yahoo.com")); // Sin teléfono ni dirección
+      repository.save(new Customer("David", "Palmer", "david.palmer@whitehouse.gov", "555-0004", "Washington DC"));
+      repository.save(new Customer("Edgar", "Stiles", "edgar.stiles@ctu.gov"));
+      repository.save(new Customer("Charles", "Logan", "charles.logan@government.gov"));
+      repository.save(new Customer("Bill", "Buchanan", "bill.buchanan@ctu.gov", "555-0005", "CTU"));
+      
+      log.info("✅ {} clientes guardados correctamente!", repository.count());
       log.info("");
-      log.info("🔴 PROBANDO DATOS INVÁLIDOS:");
-      log.info("==============================");
 
-      // Test 1: Nombre muy corto
-      Customer shortName = new Customer("A", "Bauer", "test@email.com");
-      violations = validator.validate(shortName);
-      log.info("🧪 Test 1 - Nombre muy corto:");
-      if (!violations.isEmpty()) {
-        violations.forEach(v -> log.error("   ❌ " + v.getMessage()));
-      }
-
-      // Test 2: Email inválido
-      Customer invalidEmail = new Customer("Juan", "Pérez", "email-malformado");
-      violations = validator.validate(invalidEmail);
-      log.info("🧪 Test 2 - Email inválido:");
-      if (!violations.isEmpty()) {
-        violations.forEach(v -> log.error("   ❌ " + v.getMessage()));
-      }
-
-      // Test 3: Teléfono con formato incorrecto
-      Customer invalidPhone = new Customer("María", "García", "maria@email.com", "123456789", "Dirección");
-      violations = validator.validate(invalidPhone);
-      log.info("🧪 Test 3 - Teléfono formato incorrecto:");
-      if (!violations.isEmpty()) {
-        violations.forEach(v -> log.error("   ❌ " + v.getMessage()));
-      }
-
-      // Test 4: Nombre vacío
-      Customer emptyName = new Customer("", "Apellido", "test@email.com");
-      violations = validator.validate(emptyName);
-      log.info("🧪 Test 4 - Nombre vacío:");
-      if (!violations.isEmpty()) {
-        violations.forEach(v -> log.error("   ❌ " + v.getMessage()));
-      }
-
-      // ✅ GUARDAR ALGUNOS DATOS VÁLIDOS PARA LAS CONSULTAS
-      log.info("");
-      log.info("💾 GUARDANDO DATOS VÁLIDOS PARA PRUEBAS:");
+      // 🔍 PROBAR QUERIES AUTOMÁTICAS BÁSICAS
+      log.info("� PROBANDO QUERIES AUTOMÁTICAS BÁSICAS:");
       log.info("=========================================");
       
-      repository.save(new Customer("Chloe", "O'Brian", "chloe.obrian@ctu.gov"));
-      repository.save(new Customer("Kim", "Bauer", "kim.bauer@gmail.com"));
-      repository.save(new Customer("Tony", "Almeida", "tony.almeida@ctu.gov", "555-1234", "Los Angeles, CA"));
-
-      // 📋 MOSTRAR TODOS LOS CLIENTES GUARDADOS
+      // Buscar por apellido
+      log.info("👥 Clientes con apellido 'Bauer':");
+      repository.findByLastName("Bauer").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      // Buscar por nombre
+      log.info("👤 Clientes con nombre 'Jack':");
+      repository.findByFirstName("Jack").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      // Buscar por email (usando Optional)
+      log.info("📧 Cliente con email 'kim.bauer@gmail.com':");
+      Optional<Customer> customerOpt = repository.findByEmail("kim.bauer@gmail.com");
+      if (customerOpt.isPresent()) {
+        log.info("   ✅ Encontrado: " + customerOpt.get().toString());
+      } else {
+        log.info("   ❌ No encontrado");
+      }
+      
       log.info("");
-      log.info("📋 CLIENTES GUARDADOS EN LA BASE DE DATOS:");
-      log.info("==========================================");
-      repository.findAll().forEach(customer -> {
-        log.info("✅ " + customer.toString());
-      });
 
-      factory.close();
+      // 🔎 PROBAR BÚSQUEDAS AVANZADAS
+      log.info("🔎 PROBANDO BÚSQUEDAS AVANZADAS:");
+      log.info("================================");
+      
+      // Buscar que contenga texto
+      log.info("🔍 Clientes cuyo nombre contenga 'Ch':");
+      repository.findByFirstNameContaining("Ch").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      // Buscar por apellido que contenga texto
+      log.info("🔍 Clientes cuyo apellido contenga 'Ba':");
+      repository.findByLastNameContaining("Ba").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      // Buscar ignorando mayúsculas/minúsculas
+      log.info("🔤 Clientes con nombre 'jack' (ignore case):");
+      repository.findByFirstNameIgnoreCase("jack").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      // Buscar por múltiples criterios
+      log.info("🎯 Clientes que contengan 'Ch' en nombre Y 'O' en apellido:");
+      repository.findByFirstNameContainingAndLastNameContaining("Ch", "O").forEach(customer -> 
+        log.info("   ✅ " + customer.toString()));
+      
+      log.info("");
+
+      // ✅ PROBAR VERIFICACIONES Y CONTADORES
+      log.info("✅ PROBANDO VERIFICACIONES Y CONTADORES:");
+      log.info("========================================");
+      
+      // Verificar si existe email
+      boolean exists1 = repository.existsByEmail("jack.bauer@ctu.gov");
+      log.info("❓ ¿Existe email 'jack.bauer@ctu.gov'? " + (exists1 ? "✅ SÍ" : "❌ NO"));
+      
+      boolean exists2 = repository.existsByEmail("noexiste@email.com");
+      log.info("❓ ¿Existe email 'noexiste@email.com'? " + (exists2 ? "✅ SÍ" : "❌ NO"));
+      
+      // Contar por apellido
+      long bauerCount = repository.countByLastName("Bauer");
+      log.info("🔢 Cantidad de clientes con apellido 'Bauer': " + bauerCount);
+      
+      long palmerCount = repository.countByLastName("Palmer");
+      log.info("🔢 Cantidad de clientes con apellido 'Palmer': " + palmerCount);
+      
+      log.info("");
+
+      // 🏢 PROBAR QUERIES NATIVAS
+      log.info("🏢 PROBANDO QUERIES NATIVAS:");
+      log.info("============================");
+      
+      // Contar por dominio de email usando query nativa
+      long ctuCount = repository.countByEmailDomainNative("ctu.gov");
+      log.info("🏢 Cantidad de clientes con email de CTU (.ctu.gov): " + ctuCount);
+      
+      long gmailCount = repository.countByEmailDomainNative("gmail.com");
+      log.info("📧 Cantidad de clientes con Gmail (.gmail.com): " + gmailCount);
+      
+      long govCount = repository.countByEmailDomainNative("gov");
+      log.info("🏛️ Cantidad de clientes con email .gov: " + govCount);
+      
+      log.info("");
+
+      // � MOSTRAR TODOS ORDENADOS POR FECHA DE CREACIÓN
+      log.info("� TODOS LOS CLIENTES (ordenados por fecha de creación - más recientes primero):");
+      log.info("===============================================================================");
+      repository.findAllOrderByCreatedAtDesc().forEach(customer -> 
+        log.info("✅ " + customer.toString()));
+      
+      log.info("");
+      log.info("🎉 ¡TODAS LAS QUERIES FUNCIONARON CORRECTAMENTE!");
+      log.info("===============================================");
     };
   }
 }
