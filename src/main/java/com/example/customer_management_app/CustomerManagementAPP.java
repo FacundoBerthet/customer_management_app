@@ -19,12 +19,16 @@ public class CustomerManagementAPP {
   @Bean
   public CommandLineRunner demo(CustomerRepository repository) {
     return (args) -> {
-      // save a few customers
-      repository.save(new Customer("Jack", "Bauer"));
-      repository.save(new Customer("Chloe", "O'Brian"));
-      repository.save(new Customer("Kim", "Bauer"));
-      repository.save(new Customer("David", "Palmer"));
-      repository.save(new Customer("Michelle", "Dessler"));
+      // Usando constructor con 3 parámetros (nombre, apellido, email)
+      repository.save(new Customer("Jack", "Bauer", "jack.bauer@ctu.gov"));
+      repository.save(new Customer("Chloe", "O'Brian", "chloe.obrian@ctu.gov"));
+      repository.save(new Customer("Kim", "Bauer", "kim.bauer@gmail.com"));
+      repository.save(new Customer("David", "Palmer", "david.palmer@whitehouse.gov"));
+      repository.save(new Customer("Michelle", "Dessler", "michelle.dessler@ctu.gov"));
+
+      // Usando constructor con 5 parámetros (todos los campos)
+      repository.save(new Customer("Tony", "Almeida", "tony.almeida@ctu.gov", "555-1234", "Los Angeles, CA"));
+      repository.save(new Customer("Edgar", "Stiles", "edgar.stiles@ctu.gov", "555-5678", "Beverly Hills, CA"));
 
       // fetch all customers
       log.info("Customers found with findAll():");
@@ -50,5 +54,4 @@ public class CustomerManagementAPP {
       log.info("");
     };
   }
-
 }
