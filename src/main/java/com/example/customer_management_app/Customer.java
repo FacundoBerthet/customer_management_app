@@ -169,4 +169,12 @@ public class Customer {
     this.address = address;
     this.updatedAt = LocalDateTime.now(); // Actualiza la fecha de modificación al cambiar la dirección
   }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+  } 
 }
