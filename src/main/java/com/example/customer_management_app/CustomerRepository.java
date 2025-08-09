@@ -11,7 +11,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
   // QUERIES AUTOMÁTICAS
   // Spring Data JPA generará automáticamente las consultas basadas en el nombre del método
-  Customer findById(long id);
+  Optional<Customer> findById(Long id);
   List<Customer> findByFirstName(String firstName);
   List<Customer> findByLastName(String lastName);   
   Optional<Customer> findByEmail(String email);  // Retorna Optional.empty() si no encuentra

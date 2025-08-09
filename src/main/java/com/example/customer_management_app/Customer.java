@@ -65,8 +65,21 @@ public class Customer {
   private LocalDateTime updatedAt; // Fecha de actualización del registro
 
 
+
   // Constructor vacío protegido - requerido por JPA para crear instancias de la entidad
   protected Customer() {}
+
+  // Constructor público para testing que permite setear el id manualmente
+  public Customer(Long id, String firstName, String lastName, String email, String phone, String address) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.phone = phone;
+    this.address = address;
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
 
 
   // CONSTRUCTOR CON 3 PARÁMETROS (nombre, apellido, email)
