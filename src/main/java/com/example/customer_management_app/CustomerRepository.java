@@ -32,7 +32,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
   List<Customer> findAllOrderByCreatedAtDesc();
   
   // Contar clientes por dominio de email
-  @Query(value = "SELECT COUNT(*) FROM customer WHERE email LIKE %:domain%", nativeQuery = true)
+  @Query(value = "SELECT COUNT(*) FROM customer WHERE email LIKE '%' || :domain || '%'", nativeQuery = true)
   long countByEmailDomainNative(@Param("domain") String domain);
-
 }
