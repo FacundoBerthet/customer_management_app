@@ -1,6 +1,8 @@
 package com.example.customer_management_app;
 
 import org.springframework.beans.factory.annotation.Autowired; // Importar la anotación @Autowired para inyección de dependencias
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service; // Importar la anotación @Service para marcar esta clase como un servicio de Spring
 import org.springframework.transaction.annotation.Transactional; // Importar la anotación @Transactional para manejar transacciones
 
@@ -44,6 +46,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(readOnly = true)
     public List<Customer> getAllCustomers() {
         return (List<Customer>) customerRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Customer> getAllCustomers(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     @Override
@@ -170,6 +178,16 @@ public class CustomerServiceImpl implements CustomerService {
          */
         return customerRepository.findByFirstNameContainingOrLastNameContaining(
             searchTerm.trim(), searchTerm.trim());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Customer> searchCustomers(String searchTerm, Pageable pageable) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return customerRepository.findAll(pageable);
+        }
+        String term = searchTerm.trim();
+        return customerRepository.findByFirstNameContainingOrLastNameContaining(term, term, pageable);
     }
 
     @Override

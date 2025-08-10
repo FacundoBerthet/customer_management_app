@@ -100,4 +100,16 @@ public interface CustomerService {
         public long getGmailUsers() { return gmailUsers; }
 
     }
+
+    /**
+     * Obtiene clientes paginados.
+     * @param pageable parámetros de paginación y ordenamiento
+     * @return Página de clientes
+     */
+    org.springframework.data.domain.Page<Customer> getAllCustomers(org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * Busca clientes por término con paginación.
+     */
+    org.springframework.data.domain.Page<Customer> searchCustomers(String searchTerm, org.springframework.data.domain.Pageable pageable);
 }

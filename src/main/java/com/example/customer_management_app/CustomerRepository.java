@@ -3,11 +3,13 @@ package com.example.customer_management_app;
 import java.util.List; // importar la clase List
 import java.util.Optional; // importar la clase Optional
 
-import org.springframework.data.repository.CrudRepository; // Importar CrudRepository para operaciones CRUD
+import org.springframework.data.domain.Page; // Para resultados paginados
+import org.springframework.data.domain.Pageable; // Para parámetros de paginación
+import org.springframework.data.jpa.repository.JpaRepository; // Cambio a JpaRepository para habilitar paginación y ordenamiento
 import org.springframework.data.jpa.repository.Query; // Importar Query para consultas personalizadas
 import org.springframework.data.repository.query.Param; // Importar Param para parámetros en consultas
 
-public interface CustomerRepository extends CrudRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
   // QUERIES AUTOMÁTICAS
   // Spring Data JPA generará automáticamente las consultas basadas en el nombre del método
@@ -23,6 +25,8 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
   boolean existsByEmail(String email);// Verificar si existe
   long countByLastName(String lastName);// Contar registros
 
+  // Variante paginada de la búsqueda por nombre o apellido
+  Page<Customer> findByFirstNameContainingOrLastNameContaining(String firstName, String lastName, Pageable pageable);
 
   // QUERIES NATIVAS
   // Sql nativo para consultas más complejas

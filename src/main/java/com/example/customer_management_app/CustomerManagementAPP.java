@@ -26,7 +26,15 @@ import io.swagger.v3.oas.annotations.media.ArraySchema; // Para documentar lista
 
 // Importo DTOs y el mapper para no exponer la entidad directamente en el API
 import com.example.customer_management_app.dto.CustomerResponse;
+import com.example.customer_management_app.dto.PageResponse;
 import com.example.customer_management_app.mapper.CustomerMapper;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest; // Importo PageRequest para construir Pageable con límite de tamaño
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @SpringBootApplication // Marca esta como aplicación Spring Boot principal
@@ -276,4 +284,66 @@ public class CustomerManagementAPP {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }  
   } 
+  
+  // ==========================================================================
+  // MANEJO DE SOLICITUDES PAGINADAS
+  // ==========================================================================
+
+  // Obtener clientes con paginación - /api/customers/page
+  @Operation(summary = "Get customers (paged)", description = "Retrieve customers with pagination and sorting (default sort: id,DESC)")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
+  })
+  @GetMapping("/page")
+  public PageResponse<CustomerResponse> getCustomersPaged(
+      @Parameter(description = "Pagination and sorting parameters (page, size, sort)")
+      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+      @RequestParam(value = "size", required = false) Integer sizeOverride) {
+
+    // Limito el tamaño máximo permitido para evitar abusos
+    Pageable effective = (sizeOverride != null && sizeOverride > 50)
+        ? PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort())
+        : pageable;
+
+    Page<Customer> page = customerService.getAllCustomers(effective);
+    return new PageResponse<>(
+        CustomerMapper.toResponseList(page.getContent()),
+        page.getNumber(),
+        page.getSize(),
+        page.getTotalElements(),
+        page.getTotalPages(),
+        page.isFirst(),
+        page.isLast()
+    );
+  }
+
+  @Operation(summary = "Search customers (paged)", description = "Search by name or last name (default sort: id,DESC)")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
+  })
+  @GetMapping("/search/page")
+  public PageResponse<CustomerResponse> searchCustomersPaged(
+      @Parameter(description = "Search term") @RequestParam("q") String q,
+      @Parameter(description = "Pagination and sorting parameters (page, size, sort)")
+      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+      @RequestParam(value = "size", required = false) Integer sizeOverride) {
+
+    // Limito el tamaño máximo permitido
+    Pageable effective = (sizeOverride != null && sizeOverride > 50)
+        ? PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort())
+        : pageable;
+
+    Page<Customer> page = customerService.searchCustomers(q, effective);
+    return new PageResponse<>(
+        CustomerMapper.toResponseList(page.getContent()),
+        page.getNumber(),
+        page.getSize(),
+        page.getTotalElements(),
+        page.getTotalPages(),
+        page.isFirst(),
+        page.isLast()
+    );
+  }
 }
