@@ -16,4 +16,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 )
 public class OpenApiConfig {
     // Configuración global de documentación OpenAPI/Swagger
+    // Nota: si en PROD quiero cambiar el server.url dinámicamente,
+    // puedo leer un valor de properties por perfil y ajustar el Server en runtime.
 }
