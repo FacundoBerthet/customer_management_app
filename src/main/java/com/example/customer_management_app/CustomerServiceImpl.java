@@ -1,7 +1,5 @@
 package com.example.customer_management_app;
 
-import org.slf4j.Logger;// Importar la clase Logger para logging
-import org.slf4j.LoggerFactory;// Importar la clase LoggerFactory para crear instancias de Logger
 import org.springframework.beans.factory.annotation.Autowired; // Importar la anotación @Autowired para inyección de dependencias
 import org.springframework.stereotype.Service; // Importar la anotación @Service para marcar esta clase como un servicio de Spring
 import org.springframework.transaction.annotation.Transactional; // Importar la anotación @Transactional para manejar transacciones
@@ -27,9 +25,6 @@ import java.util.Optional; // Importar la clase Optional para manejar valores qu
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
-    // Logger para registrar información, advertencias y errores
-    private static final Logger log = LoggerFactory.getLogger(CustomerServiceImpl.class); // Logger para esta clase
-
     /**
      * ¿Por qué @Autowired en el Repository?
      * - Spring inyecta automáticamente la implementación
@@ -48,14 +43,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override  
     @Transactional(readOnly = true)
     public List<Customer> getAllCustomers() {
-        log.debug("Retrieving all customers");
         return (List<Customer>) customerRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Customer> getCustomerById(Long id) {
-        log.debug("Retrieving customer with id: {}", id); // Para desarrollo
+        // Para desarrollo
         
         /**
          * ¿Por qué validar el parámetro?
@@ -72,7 +66,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer createCustomer(Customer customer) {
-        log.info("Creating new customer: {}", customer.getEmail()); // Para producción
         
         /**
          * ¿Por qué estas validaciones aquí y no en el Controller?
@@ -89,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
          * - Podemos dar un mensaje de error específico
          */
         if (customerRepository.existsByEmail(customer.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + customer.getEmail());
+            throw new DuplicateEmailException("Email already exists: " + customer.getEmail());
         }
         
         /**
@@ -103,13 +96,11 @@ public class CustomerServiceImpl implements CustomerService {
         
         Customer savedCustomer = customerRepository.save(customer);
         
-        log.info("Customer created successfully with ID: {}", savedCustomer.getId());
         return savedCustomer;
     }
 
     @Override
     public Customer updateCustomer(Long id, Customer customerUpdates) {
-        log.info("Updating customer with ID: {}", id);
         
         /**
          * ¿Por qué buscar el cliente existente primero?
@@ -127,7 +118,7 @@ public class CustomerServiceImpl implements CustomerService {
          */
         if (!existingCustomer.getEmail().equals(customerUpdates.getEmail()) 
             && customerRepository.existsByEmail(customerUpdates.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + customerUpdates.getEmail());
+            throw new DuplicateEmailException("Email already exists: " + customerUpdates.getEmail());
         }
         
         /**
@@ -145,32 +136,27 @@ public class CustomerServiceImpl implements CustomerService {
         
         Customer updatedCustomer = customerRepository.save(existingCustomer);
         
-        log.info("Customer updated successfully: {}", updatedCustomer.getId());
         return updatedCustomer;
     }
 
     @Override
     public void deleteCustomer(Long id) {
-        log.info("Deleting customer with ID: {}", id);
         
         /**
          * ¿Por qué verificar existencia antes de eliminar?
          * - Dar un error claro si no existe
          * - Evitar confusión ("¿se eliminó o no existía?")
-         * - Logging apropiado
          */
         if (!customerRepository.existsById(id)) {
             throw new IllegalArgumentException("Customer not found with ID: " + id);
         }
         
         customerRepository.deleteById(id);
-        log.info("Customer deleted successfully: {}", id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Customer> searchCustomers(String searchTerm) {
-        log.debug("Searching customers with term: {}", searchTerm);
         
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return getAllCustomers();
@@ -189,7 +175,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
-        log.debug("Checking if email exists: {}", email);
         
         if (email == null || email.trim().isEmpty()) {
             return false;
@@ -201,7 +186,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public long countByLastName(String lastName) {
-        log.debug("Counting customers with last name: {}", lastName);
         
         if (lastName == null || lastName.trim().isEmpty()) {
             return 0;
@@ -213,7 +197,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public CustomerStats getStatistics() {
-        log.debug("Generating customer statistics");
         
         /**
          * ¿Por qué calcular estadísticas en el Service?

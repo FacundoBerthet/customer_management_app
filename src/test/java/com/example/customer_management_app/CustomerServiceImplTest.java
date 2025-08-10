@@ -2,7 +2,7 @@ package com.example.customer_management_app;
 
 import org.junit.jupiter.api.BeforeEach;// Importa las anotaciones de JUnit 5
 import org.junit.jupiter.api.Test;// Importa las anotaciones de JUnit 5
-import org.mockito.Mockito; // Importa las anotaciones de Mockito
+// import org.mockito.Mockito; // Importa las anotaciones de Mockito
 import org.mockito.InjectMocks; // Permite inyectar mocks en la clase de prueba
 import org.mockito.Mock; // Permite crear un mock de CustomerRepository
 import org.junit.jupiter.api.extension.ExtendWith; // Importa la anotación para extender con Mockito
@@ -56,7 +56,7 @@ class CustomerServiceImplTest {
     // Prueba para crear un cliente con email duplicado
     void testCreateCustomerDuplicateEmail() {
         when(customerRepository.existsByEmail(customer.getEmail())).thenReturn(true);
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(customer));
+        Exception ex = assertThrows(DuplicateEmailException.class, () -> customerService.createCustomer(customer));
         assertTrue(ex.getMessage().contains("Email already exists"));
     }
 
@@ -93,7 +93,7 @@ class CustomerServiceImplTest {
     void testUpdateCustomerEmailDuplicate() {
         lenient().when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(customerRepository.existsByEmail(customer2.getEmail())).thenReturn(true);
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> customerService.updateCustomer(1L, customer2));
+        Exception ex = assertThrows(DuplicateEmailException.class, () -> customerService.updateCustomer(1L, customer2));
         assertTrue(ex.getMessage().contains("Email already exists"));
     }
 

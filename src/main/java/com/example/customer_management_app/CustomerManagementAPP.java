@@ -18,6 +18,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.parameters.RequestBody; // Documentar el cuerpo de la solicitud
+import io.swagger.v3.oas.annotations.media.Content; // Especificar el tipo de contenido
+import io.swagger.v3.oas.annotations.media.Schema; // Referenciar el esquema del modelo
+import io.swagger.v3.oas.annotations.media.ExampleObject; // Incluir ejemplos de payload
 
 
 
@@ -53,7 +57,8 @@ public class CustomerManagementAPP {
   @Operation(summary = "Get customer by ID", description = "Retrieve a single customer by its unique identifier")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Customer found"),
-    @ApiResponse(responseCode = "404", description = "Customer not found")
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
   })
   @GetMapping("/{id}") 
   public ResponseEntity<Customer> getCustomerById(@Parameter(description = "Customer ID") @PathVariable Long id) {
@@ -148,15 +153,40 @@ public class CustomerManagementAPP {
   @Operation(summary = "Create customer", description = "Create a new customer")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Customer created successfully"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "400", description = "Invalid input data",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(responseCode = "409", description = "Email already exists",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
   })
+  @RequestBody(
+    description = "Customer data to create",
+    required = true,
+    content = @Content(
+      mediaType = "application/json",
+      schema = @Schema(implementation = Customer.class),
+      examples = {
+        @ExampleObject(
+          name = "Minimal",
+          summary = "Required fields only",
+          value = "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\"\n}"
+        ),
+        @ExampleObject(
+          name = "With optional fields",
+          summary = "Includes phone and address",
+          value = "{\n  \"firstName\": \"Ana\",\n  \"lastName\": \"García\",\n  \"email\": \"ana.garcia@example.com\",\n  \"phone\": \"123-4567\",\n  \"address\": \"123 Main St, Springfield\"\n}"
+        )
+      }
+    )
+  )
   @PostMapping
-  public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
+  public ResponseEntity<Customer> createCustomer(@Valid @org.springframework.web.bind.annotation.RequestBody Customer customer) {
       try {
           Customer savedCustomer = customerService.createCustomer(customer);
           return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer); // 201 Created
+      } catch (DuplicateEmailException e) {
+          return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict (manejado globalmente)
       } catch (Exception e) {
-          return ResponseEntity.badRequest().build(); // 400 Bad Request
+          return ResponseEntity.badRequest().build(); // 400 Bad Request (validación global)
       }
   }
 
@@ -169,14 +199,40 @@ public class CustomerManagementAPP {
   @Operation(summary = "Update customer", description = "Update an existing customer by ID")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
-    @ApiResponse(responseCode = "404", description = "Customer not found"),
-    @ApiResponse(responseCode = "500", description = "Unexpected error occurred")
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(responseCode = "409", description = "Email already exists",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(responseCode = "500", description = "Unexpected error occurred",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
   })
+  @RequestBody(
+    description = "Customer data to update (ID provided in path)",
+    required = true,
+    content = @Content(
+      mediaType = "application/json",
+      schema = @Schema(implementation = Customer.class),
+      examples = {
+        @ExampleObject(
+          name = "Update name",
+          summary = "Change first and last name",
+          value = "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane.doe@example.com\"\n}"
+        ),
+        @ExampleObject(
+          name = "Update optional fields",
+          summary = "Modify phone and address",
+          value = "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"987-6543\",\n  \"address\": \"742 Evergreen Terrace\"\n}"
+        )
+      }
+    )
+  )
   @PutMapping("/{id}")
-  public ResponseEntity<Customer> updateCustomer(@Parameter(description = "Customer ID") @PathVariable Long id, @Valid @RequestBody Customer customerDetails) {
+  public ResponseEntity<Customer> updateCustomer(@Parameter(description = "Customer ID") @PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody Customer customerDetails) {
     try {
         Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
         return ResponseEntity.ok(updatedCustomer);
+    } catch (DuplicateEmailException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict
     } catch (IllegalArgumentException e) {
         // El Service maneja tanto "no encontrado" como "email duplicado"
         return ResponseEntity.notFound().build();
@@ -194,8 +250,10 @@ public class CustomerManagementAPP {
   @Operation(summary = "Delete customer", description = "Delete a customer by ID")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "204", description = "Customer deleted successfully"),
-    @ApiResponse(responseCode = "404", description = "Customer not found"),
-    @ApiResponse(responseCode = "500", description = "Unexpected error occurred")
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    @ApiResponse(responseCode = "500", description = "Unexpected error occurred",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
   })
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCustomer(@Parameter(description = "Customer ID") @PathVariable Long id) {

@@ -26,6 +26,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
 
+// Importar @Schema para documentar campos con ejemplos y descripciones
+import io.swagger.v3.oas.annotations.media.Schema; 
+
 
 @Entity // Marca esta clase como una entidad JPA - se mapeará a una tabla en la base de datos
 public class Customer {
@@ -33,35 +36,43 @@ public class Customer {
   
   @Id // Marca este campo como la clave primaria de la tabla
   @GeneratedValue(strategy=GenerationType.AUTO) // Configura la generación automática del ID - JPA elegirá la mejor estrategia
+  @Schema(description = "Unique identifier of the customer", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
   private Long id; // Campo para almacenar el ID único del cliente (clave primaria)
 
   // Validaciones para firstName y lastName
   @NotBlank(message = "First name is required") // El nombre no puede estar vacío
   @Size(min = 2, max = 40, message = "First name must be between 2 and 40 characters")
+  @Schema(description = "Customer first name", example = "John")
   private String firstName;
 
   @NotBlank(message = "Last name is required") // El apellido no puede estar vacío
   @Size(min = 2, max = 40, message = "Last name must be between 2 and 40 characters")
+  @Schema(description = "Customer last name", example = "Doe")
   private String lastName;
 
   // Validaciones para email
   @NotBlank(message = "Email is required") // El email no puede estar vacío
   @Email(message = "Email must be valid (example@example.com)") // El email debe ser válido
   @Column(unique = true) // Email debe ser único
+  @Schema(description = "Unique email address", example = "john.doe@example.com")
   private String email;
 
   // Validacion para phone
   @Pattern(regexp = "^$|^\\d{3}-\\d{4}$", 
            message = "The phone must be in the format XXX-XXXX or empty")
+  @Schema(description = "Phone number in the format XXX-XXXX (optional)", example = "123-4567", pattern = "^$|^\\d{3}-\\d{4}$")
   private String phone;
 
   // Validación para address
   @Size(max = 100, message = "Address must be less than 100 characters")
+  @Schema(description = "Street address (optional)", example = "123 Main St, Springfield")
   private String address;
 
   @Column(name = "created_at") // Nombre de la columna en la base de datos
+  @Schema(description = "Creation timestamp", example = "2025-08-10T12:34:56", accessMode = Schema.AccessMode.READ_ONLY)
   private LocalDateTime createdAt; // Fecha de creación del registro
   @Column(name = "updated_at") // Nombre de la columna en la base de datos
+  @Schema(description = "Last update timestamp", example = "2025-08-10T12:34:56", accessMode = Schema.AccessMode.READ_ONLY)
   private LocalDateTime updatedAt; // Fecha de actualización del registro
 
 
