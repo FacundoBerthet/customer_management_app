@@ -22,7 +22,11 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody; // Documentar el cu
 import io.swagger.v3.oas.annotations.media.Content; // Especificar el tipo de contenido
 import io.swagger.v3.oas.annotations.media.Schema; // Referenciar el esquema del modelo
 import io.swagger.v3.oas.annotations.media.ExampleObject; // Incluir ejemplos de payload
+import io.swagger.v3.oas.annotations.media.ArraySchema; // Para documentar listas/arrays en OpenAPI
 
+// Importo DTOs y el mapper para no exponer la entidad directamente en el API
+import com.example.customer_management_app.dto.CustomerResponse;
+import com.example.customer_management_app.mapper.CustomerMapper;
 
 
 @SpringBootApplication // Marca esta como aplicación Spring Boot principal
@@ -39,33 +43,36 @@ public class CustomerManagementAPP {
   @Autowired // Inyecta automaticamente el CustomerService
   private CustomerService customerService;
 
-  // ===========================================================================
+  // ==========================================================================
   // MANEJO DE SOLICITUDES GET
-  // ===========================================================================
+  // ==========================================================================
   
   // Obtener todos los clientes - /api/customers
   @Operation(summary = "Get all customers", description = "Retrieve the full list of customers")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "List of customers returned successfully")
+    @ApiResponse(responseCode = "200", description = "List of customers returned successfully",
+      content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))))
   })
   @GetMapping 
-  public List<Customer> getAllCustomers() {
-    return customerService.getAllCustomers(); // Retorna todos los clientes
+  public List<CustomerResponse> getAllCustomers() {
+    // Mapeo entidad -> DTO para no exponer la entidad JPA
+    return CustomerMapper.toResponseList(customerService.getAllCustomers());
   }
 
   // Obtener un cliente por ID - /api/customers/{id}
   @Operation(summary = "Get customer by ID", description = "Retrieve a single customer by its unique identifier")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Customer found"),
+    @ApiResponse(responseCode = "200", description = "Customer found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "404", description = "Customer not found",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
   })
   @GetMapping("/{id}") 
-  public ResponseEntity<Customer> getCustomerById(@Parameter(description = "Customer ID") @PathVariable Long id) {
+  public ResponseEntity<com.example.customer_management_app.dto.CustomerResponse> getCustomerById(@Parameter(description = "Customer ID") @PathVariable Long id) {
     Optional<Customer> customer = customerService.getCustomerById(id);
     
     if (customer.isPresent()) {
-        return ResponseEntity.ok(customer.get()); // 200 OK
+        return ResponseEntity.ok(com.example.customer_management_app.mapper.CustomerMapper.toResponse(customer.get())); // 200 OK
     } else {
         return ResponseEntity.notFound().build(); // 404 Not Found
     }
@@ -77,8 +84,8 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
   @GetMapping("/search/{searchTerm}")
-  public List<Customer> searchCustomers(@Parameter(description = "Search term") @PathVariable String searchTerm) {
-    return customerService.searchCustomers(searchTerm);
+  public List<CustomerResponse> searchCustomers(@Parameter(description = "Search term") @PathVariable String searchTerm) {
+    return CustomerMapper.toResponseList(customerService.searchCustomers(searchTerm));
   }
 
   // Buscar por nombre - /api/customers/search/firstname/{firstName}
@@ -87,8 +94,8 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
   @GetMapping("/search/firstname/{firstName}")
-  public List<Customer> getCustomersByFirstName(@Parameter(description = "First name to search") @PathVariable String firstName) {
-    return customerService.searchCustomers(firstName);
+  public List<CustomerResponse> getCustomersByFirstName(@Parameter(description = "First name to search") @PathVariable String firstName) {
+    return CustomerMapper.toResponseList(customerService.searchCustomers(firstName));
   }
 
   // Buscar por apellido - /api/customers/search/lastname/{lastName}
@@ -97,8 +104,8 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
   @GetMapping("/search/lastname/{lastName}")
-  public List<Customer> getCustomersByLastName(@Parameter(description = "Last name to search") @PathVariable String lastName) {
-    return customerService.searchCustomers(lastName);
+  public List<CustomerResponse> getCustomersByLastName(@Parameter(description = "Last name to search") @PathVariable String lastName) {
+    return CustomerMapper.toResponseList(customerService.searchCustomers(lastName));
   }
 
   // Buscar por nombre que contenga una cadena - /api/customers/search/contains/{name}
@@ -107,8 +114,8 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
   @GetMapping("/search/contains/{name}")
-  public List<Customer> getCustomersByNameContains(@Parameter(description = "Text to search in name or last name") @PathVariable String name) {
-    return customerService.searchCustomers(name);
+  public List<CustomerResponse> getCustomersByNameContains(@Parameter(description = "Text to search in name or last name") @PathVariable String name) {
+    return CustomerMapper.toResponseList(customerService.searchCustomers(name));
   }
 
   // Verificar si un email existe - /api/customers/exists/email/{email}
@@ -145,14 +152,15 @@ public class CustomerManagementAPP {
   }
 
 
-  // ===========================================================================
+  // ==========================================================================
   // MANEJO DE SOLICITUDES POST
   // ==========================================================================
 
   // Crear un nuevo cliente - /api/customers
   @Operation(summary = "Create customer", description = "Create a new customer")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Customer created successfully"),
+    @ApiResponse(responseCode = "201", description = "Customer created successfully",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "400", description = "Invalid input data",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
     @ApiResponse(responseCode = "409", description = "Email already exists",
@@ -163,7 +171,7 @@ public class CustomerManagementAPP {
     required = true,
     content = @Content(
       mediaType = "application/json",
-      schema = @Schema(implementation = Customer.class),
+      schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerRequest.class),
       examples = {
         @ExampleObject(
           name = "Minimal",
@@ -179,10 +187,10 @@ public class CustomerManagementAPP {
     )
   )
   @PostMapping
-  public ResponseEntity<Customer> createCustomer(@Valid @org.springframework.web.bind.annotation.RequestBody Customer customer) {
+  public ResponseEntity<com.example.customer_management_app.dto.CustomerResponse> createCustomer(@Valid @org.springframework.web.bind.annotation.RequestBody com.example.customer_management_app.dto.CustomerRequest request) {
       try {
-          Customer savedCustomer = customerService.createCustomer(customer);
-          return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer); // 201 Created
+          Customer savedCustomer = customerService.createCustomer(com.example.customer_management_app.mapper.CustomerMapper.fromRequest(request));
+          return ResponseEntity.status(HttpStatus.CREATED).body(com.example.customer_management_app.mapper.CustomerMapper.toResponse(savedCustomer)); // 201 Created
       } catch (DuplicateEmailException e) {
           return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict (manejado globalmente)
       } catch (Exception e) {
@@ -191,14 +199,15 @@ public class CustomerManagementAPP {
   }
 
 
-  // ===========================================================================
+  // ==========================================================================
   // MANEJO DE SOLICITUDES PUT
   // ==========================================================================
 
   // Actualizar un cliente existente - /api/customers/{id}
   @Operation(summary = "Update customer", description = "Update an existing customer by ID")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "404", description = "Customer not found",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
     @ApiResponse(responseCode = "409", description = "Email already exists",
@@ -211,7 +220,7 @@ public class CustomerManagementAPP {
     required = true,
     content = @Content(
       mediaType = "application/json",
-      schema = @Schema(implementation = Customer.class),
+      schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerRequest.class),
       examples = {
         @ExampleObject(
           name = "Update name",
@@ -227,10 +236,10 @@ public class CustomerManagementAPP {
     )
   )
   @PutMapping("/{id}")
-  public ResponseEntity<Customer> updateCustomer(@Parameter(description = "Customer ID") @PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody Customer customerDetails) {
+  public ResponseEntity<com.example.customer_management_app.dto.CustomerResponse> updateCustomer(@Parameter(description = "Customer ID") @PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody com.example.customer_management_app.dto.CustomerRequest customerDetails) {
     try {
-        Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
-        return ResponseEntity.ok(updatedCustomer);
+        Customer updatedCustomer = customerService.updateCustomer(id, com.example.customer_management_app.mapper.CustomerMapper.fromRequest(customerDetails));
+        return ResponseEntity.ok(com.example.customer_management_app.mapper.CustomerMapper.toResponse(updatedCustomer));
     } catch (DuplicateEmailException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict
     } catch (IllegalArgumentException e) {
@@ -242,7 +251,7 @@ public class CustomerManagementAPP {
   }
 
 
-  // ===========================================================================
+  // ==========================================================================
   // MANEJO DE SOLICITUDES DELETE
   // ==========================================================================
 
