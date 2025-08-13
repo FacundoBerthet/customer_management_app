@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Content; // Especificar el tipo de co
 import io.swagger.v3.oas.annotations.media.Schema; // Referenciar el esquema del modelo
 import io.swagger.v3.oas.annotations.media.ExampleObject; // Incluir ejemplos de payload
 import io.swagger.v3.oas.annotations.media.ArraySchema; // Para documentar listas/arrays en OpenAPI
+import io.swagger.v3.oas.annotations.Hidden; // Ocultar endpoints en la documentación de Swagger/OpenAPI
 
 // Importo DTOs y el mapper para no exponer la entidad directamente en el API
 import com.example.customer_management_app.dto.CustomerResponse;
@@ -40,7 +41,7 @@ import org.springdoc.core.annotations.ParameterObject; // Para documentar Pageab
 @SpringBootApplication // Marca esta como aplicación Spring Boot principal
 @RestController // Marca esta clase como un controlador REST
 @RequestMapping("/api/customers") // Define la ruta base para las operaciones de cliente
-@Tag(name = "Customers", description = "CRUD operations and customer queries")
+@Tag(name = "Customers", description = "CRUD operations and customer queries. Standard error format: ErrorResponse (timestamp, path, status, error, message).")
 public class CustomerManagementAPP {
 
   // Método main para ejecutar la aplicación
@@ -99,6 +100,7 @@ public class CustomerManagementAPP {
 
   // Buscar clientes por término de búsqueda - /api/customers/search/{searchTerm}
   // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Hidden // Oculto en Swagger para no ensuciar la documentación
   @Deprecated // Mantengo compatibilidad, pero indico que no debe usarse en nuevas integraciones
   @Operation(summary = "Search customers (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
@@ -111,6 +113,7 @@ public class CustomerManagementAPP {
 
   // Buscar por nombre - /api/customers/search/firstname/{firstName}
   // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Hidden // Oculto en Swagger
   @Deprecated
   @Operation(summary = "Search by first name (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
@@ -123,6 +126,7 @@ public class CustomerManagementAPP {
 
   // Buscar por apellido - /api/customers/search/lastname/{lastName}
   // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Hidden // Oculto en Swagger
   @Deprecated
   @Operation(summary = "Search by last name (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
@@ -135,6 +139,7 @@ public class CustomerManagementAPP {
 
   // Buscar por nombre que contenga una cadena - /api/customers/search/contains/{name}
   // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Hidden // Oculto en Swagger
   @Deprecated
   @Operation(summary = "Search by name contains (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
@@ -413,6 +418,21 @@ public class CustomerManagementAPP {
           )
         }
       )
+    ),
+    @ApiResponse(
+      responseCode = "400",
+      description = "Invalid paging parameters",
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Bad Request",
+            summary = "Invalid size or sort",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/page\",\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Invalid paging parameters: size must be between 1 and 50; sort format is field,ASC|DESC\"\n}"
+          )
+        }
+      )
     )
   })
   @GetMapping("/page")
@@ -462,6 +482,21 @@ public class CustomerManagementAPP {
             name = "Paginated search",
             summary = "Results for q=john, first page",
             value = "{\n  \"content\": [\n    {\n      \"id\": 7,\n      \"firstName\": \"John\",\n      \"lastName\": \"Doe\",\n      \"email\": \"john.doe@example.com\",\n      \"phone\": \"123-4567\",\n      \"address\": \"742 Evergreen Terrace\",\n      \"createdAt\": \"2025-08-09T10:00:00\",\n      \"updatedAt\": \"2025-08-12T08:30:00\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 3,\n  \"totalPages\": 1,\n  \"first\": true,\n  \"last\": true\n}"
+          )
+        }
+      )
+    ),
+    @ApiResponse(
+      responseCode = "400",
+      description = "Invalid paging parameters",
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Bad Request",
+            summary = "Invalid size or sort",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/search/page\",\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Invalid paging parameters: size must be between 1 and 50; sort format is field,ASC|DESC\"\n}"
           )
         }
       )
