@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.IntStream;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -74,6 +76,75 @@ class CustomerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("POST /api/customers (payload inválido) -> 400 Bad Request")
+    void createCustomer_invalidEmail_shouldReturn400() throws Exception {
+        CustomerRequest req = new CustomerRequest();
+        req.setFirstName(""); // inválido (NotBlank)
+        req.setLastName("Doe");
+        req.setEmail("not-an-email"); // inválido (Email)
+
+        mockMvc.perform(post("/api/customers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("GET /api/customers/by-email -> 200 OK cuando existe")
+    void getByEmail_shouldReturn200() throws Exception {
+        String uniqueEmail = "lookup_" + System.currentTimeMillis() + "@example.com";
+        customerRepository.save(new Customer("Lu", "Khan", uniqueEmail, "123-4567", "Addr"));
+
+        mockMvc.perform(get("/api/customers/by-email").param("email", uniqueEmail))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.email").value(uniqueEmail));
+    }
+
+    @Test
+    @DisplayName("GET /api/customers/by-email -> 404 cuando NO existe")
+    void getByEmail_notFound_shouldReturn404() throws Exception {
+        mockMvc.perform(get("/api/customers/by-email").param("email", "no.such@example.com"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/customers/by-phone -> 200 OK cuando existe")
+    void getByPhone_shouldReturn200() throws Exception {
+        String phone = "555-0001";
+        String email = "phone_" + System.currentTimeMillis() + "@example.com";
+        customerRepository.save(new Customer("Pho", "Ne", email, phone, "Addr"));
+
+        mockMvc.perform(get("/api/customers/by-phone").param("phone", phone))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.phone").value(phone));
+    }
+
+    @Test
+    @DisplayName("GET /api/customers/by-phone -> 404 cuando NO existe")
+    void getByPhone_notFound_shouldReturn404() throws Exception {
+        mockMvc.perform(get("/api/customers/by-phone").param("phone", "999-9999"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/customers/page con size muy grande -> se capa a 50")
+    void pageSizeCapped_shouldUse50() throws Exception {
+        // Inserto al menos 60 clientes con emails únicos
+        IntStream.range(0, 60).forEach(i -> {
+            String email = "bulk" + i + "_" + System.currentTimeMillis() + "@example.com";
+            customerRepository.save(new Customer("Name" + i, "Last" + i, email, "123-" + String.format("%04d", i % 10000), "Street " + i));
+        });
+
+        mockMvc.perform(get("/api/customers/page")
+                .param("page", "0")
+                .param("size", "999"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.size").value(50))
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content.length()").value(50));
     }
 
     @Test

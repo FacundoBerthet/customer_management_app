@@ -15,6 +15,7 @@ How I add a change
 What exists now
 - `V1__create_customers.sql`: creates the `customer` table and indexes.
 - `V2__timestamps_defaults.sql`: sets default values for timestamps and fills missing values.
+- `V3__fix_customer_id_sequence.sql`: fixes auto-generated IDs in existing databases by adding a sequence default to `customer.id` and moving the sequence to the next correct value.
 
 FAQ
 - Does Flyway create the database? No. The database must exist and be reachable. Flyway creates/updates the schema (tables, indexes, constraints) inside it.
