@@ -34,7 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest; // Importo PageRequest para construir Pageable con límite de tamaño
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springdoc.core.annotations.ParameterObject; // Para documentar Pageable correctamente en OpenAPI
 
 
 @SpringBootApplication // Marca esta como aplicación Spring Boot principal
@@ -290,20 +290,20 @@ public class CustomerManagementAPP {
   // ==========================================================================
 
   // Obtener clientes con paginación - /api/customers/page
-  @Operation(summary = "Get customers (paged)", description = "Retrieve customers with pagination and sorting (default sort: id,DESC)")
+  @Operation(summary = "Get customers (paged)", description = "Retrieve customers with pagination and sorting (default sort: id,DESC; max size=50)")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
   })
   @GetMapping("/page")
   public PageResponse<CustomerResponse> getCustomersPaged(
-      @Parameter(description = "Pagination and sorting parameters (page, size, sort)")
-      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-      @RequestParam(value = "size", required = false) Integer sizeOverride) {
+      @ParameterObject
+      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-    // Limito el tamaño máximo permitido para evitar abusos
-    Pageable effective = (sizeOverride != null && sizeOverride > 50)
-        ? PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort())
+    // Limito el tamaño máximo permitido (size > 50 -> 50)
+    int cappedSize = Math.min(pageable.getPageSize(), 50);
+    Pageable effective = (pageable.getPageSize() != cappedSize)
+        ? PageRequest.of(pageable.getPageNumber(), cappedSize, pageable.getSort())
         : pageable;
 
     Page<Customer> page = customerService.getAllCustomers(effective);
@@ -318,7 +318,7 @@ public class CustomerManagementAPP {
     );
   }
 
-  @Operation(summary = "Search customers (paged)", description = "Search by name or last name (default sort: id,DESC)")
+  @Operation(summary = "Search customers (paged)", description = "Search by name or last name (default sort: id,DESC; max size=50)")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
@@ -326,13 +326,12 @@ public class CustomerManagementAPP {
   @GetMapping("/search/page")
   public PageResponse<CustomerResponse> searchCustomersPaged(
       @Parameter(description = "Search term") @RequestParam("q") String q,
-      @Parameter(description = "Pagination and sorting parameters (page, size, sort)")
-      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-      @RequestParam(value = "size", required = false) Integer sizeOverride) {
+      @ParameterObject
+      @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-    // Limito el tamaño máximo permitido
-    Pageable effective = (sizeOverride != null && sizeOverride > 50)
-        ? PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort())
+    int cappedSize = Math.min(pageable.getPageSize(), 50);
+    Pageable effective = (pageable.getPageSize() != cappedSize)
+        ? PageRequest.of(pageable.getPageNumber(), cappedSize, pageable.getSort())
         : pageable;
 
     Page<Customer> page = customerService.searchCustomers(q, effective);
