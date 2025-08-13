@@ -35,7 +35,9 @@ public class Customer {
 
   
   @Id // Marca este campo como la clave primaria de la tabla
-  @GeneratedValue(strategy=GenerationType.AUTO) // Configura la generación automática del ID - JPA elegirá la mejor estrategia
+  // Cambio a IDENTITY para alinear con PostgreSQL: nuestra migración usa BIGSERIAL,
+  // que corresponde a columnas auto-incrementales. IDENTITY permite que la BD genere el ID.
+  @GeneratedValue(strategy=GenerationType.IDENTITY)
   @Schema(description = "Unique identifier of the customer", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
   private Long id; // Campo para almacenar el ID único del cliente (clave primaria)
 
