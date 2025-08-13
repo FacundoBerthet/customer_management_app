@@ -62,6 +62,7 @@ For details and examples, see Swagger UI.
 - Current migrations:
   - `V1__create_customers.sql`: creates the `customer` table and indexes.
   - `V2__timestamps_defaults.sql`: sets default timestamps and fills missing values.
+  - `V3__fix_customer_id_sequence.sql`: ensures `customer.id` is auto-generated in existing databases (adds a sequence default and sets the next value correctly).
 
 ## Error responses (example)
 When something goes wrong, the API returns a JSON like this:
@@ -80,6 +81,12 @@ When something goes wrong, the API returns a JSON like this:
 ```bash
 ./mvnw test
 ```
+
+### Tests and the database (rollback)
+To keep things simple, tests run against the same "dev" database. We do not want test data to stay there.
+- Test classes are annotated with `@Transactional`, so each test runs inside a transaction and Spring rolls it back at the end. That means no customers created by tests will remain in your database.
+- This is the easiest way to keep your DB clean while still testing real behavior.
+- Optional: if you prefer full isolation, create a separate "test" profile (`application-test.properties` + `@ActiveProfiles("test")`) pointing to another database. For this project, the transactional rollback approach is enough.
 
 ## Change profile
 By default the app runs with the `dev` profile. To use another profile:
