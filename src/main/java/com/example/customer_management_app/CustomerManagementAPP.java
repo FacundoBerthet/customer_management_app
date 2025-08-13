@@ -73,7 +73,18 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Customer found",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "404", description = "Customer not found",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Not Found",
+            summary = "Customer not found",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/999\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Customer not found\"\n}"
+          )
+        }
+      )
+    )
   })
   @GetMapping("/{id}") 
   public ResponseEntity<com.example.customer_management_app.dto.CustomerResponse> getCustomerById(@Parameter(description = "Customer ID") @PathVariable Long id) {
@@ -87,7 +98,9 @@ public class CustomerManagementAPP {
   }
 
   // Buscar clientes por término de búsqueda - /api/customers/search/{searchTerm}
-  @Operation(summary = "Search customers", description = "Search by name, last name, email, or phone containing the given term")
+  // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Deprecated // Mantengo compatibilidad, pero indico que no debe usarse en nuevas integraciones
+  @Operation(summary = "Search customers (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
@@ -97,7 +110,9 @@ public class CustomerManagementAPP {
   }
 
   // Buscar por nombre - /api/customers/search/firstname/{firstName}
-  @Operation(summary = "Search by first name", description = "Find customers whose first name contains the given value (case-insensitive)")
+  // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Deprecated
+  @Operation(summary = "Search by first name (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
@@ -107,7 +122,9 @@ public class CustomerManagementAPP {
   }
 
   // Buscar por apellido - /api/customers/search/lastname/{lastName}
-  @Operation(summary = "Search by last name", description = "Find customers whose last name contains the given value (case-insensitive)")
+  // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Deprecated
+  @Operation(summary = "Search by last name (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
@@ -117,7 +134,9 @@ public class CustomerManagementAPP {
   }
 
   // Buscar por nombre que contenga una cadena - /api/customers/search/contains/{name}
-  @Operation(summary = "Search by name contains", description = "Find customers where first or last name contains the given text (case-insensitive)")
+  // DEPRECADO: usar /api/customers/search/page?q=... con paginación y ordenamiento
+  @Deprecated
+  @Operation(summary = "Search by name contains (DEPRECATED)", description = "Deprecated. Use GET /api/customers/search/page?q=... (supports pagination and sorting).", deprecated = true)
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Matching customers returned successfully")
   })
@@ -170,9 +189,31 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "201", description = "Customer created successfully",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "400", description = "Invalid input data",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Bad Request",
+            summary = "Validation error",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers\",\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Invalid request payload\"\n}"
+          )
+        }
+      )
+    ),
     @ApiResponse(responseCode = "409", description = "Email already exists",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Conflict",
+            summary = "Email already exists",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers\",\n  \"status\": 409,\n  \"error\": \"Conflict\",\n  \"message\": \"Email already exists\"\n}"
+          )
+        }
+      )
+    )
   })
   @RequestBody(
     description = "Customer data to create",
@@ -217,11 +258,44 @@ public class CustomerManagementAPP {
     @ApiResponse(responseCode = "200", description = "Customer updated successfully",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
     @ApiResponse(responseCode = "404", description = "Customer not found",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Not Found",
+            summary = "Customer not found",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/999\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Customer not found\"\n}"
+          )
+        }
+      )
+    ),
     @ApiResponse(responseCode = "409", description = "Email already exists",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Conflict",
+            summary = "Email already exists",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/1\",\n  \"status\": 409,\n  \"error\": \"Conflict\",\n  \"message\": \"Email already exists\"\n}"
+          )
+        }
+      )
+    ),
     @ApiResponse(responseCode = "500", description = "Unexpected error occurred",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Internal Server Error",
+            summary = "Unexpected error",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/1\",\n  \"status\": 500,\n  \"error\": \"Internal Server Error\",\n  \"message\": \"Unexpected error occurred\"\n}"
+          )
+        }
+      )
+    )
   })
   @RequestBody(
     description = "Customer data to update (ID provided in path)",
@@ -268,9 +342,31 @@ public class CustomerManagementAPP {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "204", description = "Customer deleted successfully"),
     @ApiResponse(responseCode = "404", description = "Customer not found",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Not Found",
+            summary = "Customer not found",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/999\",\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Customer not found\"\n}"
+          )
+        }
+      )
+    ),
     @ApiResponse(responseCode = "500", description = "Unexpected error occurred",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = ErrorResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Internal Server Error",
+            summary = "Unexpected error",
+            value = "{\n  \"timestamp\": \"2025-08-13T10:00:00Z\",\n  \"path\": \"/api/customers/1\",\n  \"status\": 500,\n  \"error\": \"Internal Server Error\",\n  \"message\": \"Unexpected error occurred\"\n}"
+          )
+        }
+      )
+    )
   })
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCustomer(@Parameter(description = "Customer ID") @PathVariable Long id) {
@@ -290,10 +386,34 @@ public class CustomerManagementAPP {
   // ==========================================================================
 
   // Obtener clientes con paginación - /api/customers/page
-  @Operation(summary = "Get customers (paged)", description = "Retrieve customers with pagination and sorting (default sort: id,DESC; max size=50)")
+  @Operation(
+    summary = "Get customers (paged)",
+    description = "Retrieve customers with pagination and sorting.\n\n" +
+                  "Notes:\n" +
+                  "- Max page size: 50 (larger values are capped).\n" +
+                  "- Default sort: id,DESC.\n" +
+                  "- Supported params: page (0..N), size (1..50), sort (field,ASC|DESC).\n\n" +
+                  "Examples:\n" +
+                  "- GET /api/customers/page?page=0&size=10\n" +
+                  "- GET /api/customers/page?page=1&size=20&sort=lastName,ASC\n" +
+                  "- GET /api/customers/page?sort=lastName,ASC&sort=firstName,DESC"
+  )
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
+    @ApiResponse(
+      responseCode = "200",
+      description = "Page of customers returned successfully",
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Basic paginated list",
+            summary = "First page, size 10, default sort id,DESC",
+            value = "{\n  \"content\": [\n    {\n      \"id\": 15,\n      \"firstName\": \"Ana\",\n      \"lastName\": \"García\",\n      \"email\": \"ana.garcia@example.com\",\n      \"phone\": \"123-4567\",\n      \"address\": \"123 Main St\",\n      \"createdAt\": \"2025-08-10T12:34:56\",\n      \"updatedAt\": \"2025-08-12T08:00:00\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 42,\n  \"totalPages\": 5,\n  \"first\": true,\n  \"last\": false\n}"
+          )
+        }
+      )
+    )
   })
   @GetMapping("/page")
   public PageResponse<CustomerResponse> getCustomersPaged(
@@ -318,14 +438,38 @@ public class CustomerManagementAPP {
     );
   }
 
-  @Operation(summary = "Search customers (paged)", description = "Search by name or last name (default sort: id,DESC; max size=50)")
+  @Operation(
+    summary = "Search customers (paged)",
+    description = "Search by first or last name with pagination and sorting.\n\n" +
+                  "Notes:\n" +
+                  "- Max page size: 50 (larger values are capped).\n" +
+                  "- Default sort: id,DESC.\n" +
+                  "- Supported params: q (search text), page (0..N), size (1..50), sort (field,ASC|DESC).\n\n" +
+                  "Examples:\n" +
+                  "- GET /api/customers/search/page?q=john&page=0&size=10\n" +
+                  "- GET /api/customers/search/page?q=gar&sort=lastName,ASC\n" +
+                  "- GET /api/customers/search/page?q=ana&sort=lastName,ASC&sort=firstName,DESC"
+  )
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Page of customers returned successfully",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class)))
+    @ApiResponse(
+      responseCode = "200",
+      description = "Page of customers returned successfully",
+      content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = com.example.customer_management_app.dto.PageResponse.class),
+        examples = {
+          @ExampleObject(
+            name = "Paginated search",
+            summary = "Results for q=john, first page",
+            value = "{\n  \"content\": [\n    {\n      \"id\": 7,\n      \"firstName\": \"John\",\n      \"lastName\": \"Doe\",\n      \"email\": \"john.doe@example.com\",\n      \"phone\": \"123-4567\",\n      \"address\": \"742 Evergreen Terrace\",\n      \"createdAt\": \"2025-08-09T10:00:00\",\n      \"updatedAt\": \"2025-08-12T08:30:00\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 3,\n  \"totalPages\": 1,\n  \"first\": true,\n  \"last\": true\n}"
+          )
+        }
+      )
+    )
   })
   @GetMapping("/search/page")
   public PageResponse<CustomerResponse> searchCustomersPaged(
-      @Parameter(description = "Search term") @RequestParam("q") String q,
+      @Parameter(description = "Search term", example = "john") @RequestParam("q") String q,
       @ParameterObject
       @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
