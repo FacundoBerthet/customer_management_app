@@ -187,7 +187,11 @@ public class CustomerServiceImpl implements CustomerService {
             return customerRepository.findAll(pageable);
         }
         String term = searchTerm.trim();
-        return customerRepository.findByFirstNameContainingOrLastNameContaining(term, term, pageable);
+
+        // Búsqueda unificada: incluye nombre, apellido, email, teléfono y dirección (contains, case-insensitive)
+        return customerRepository
+            .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCaseOrAddressContainingIgnoreCase(
+                term, term, term, term, term, pageable);
     }
 
     @Override
@@ -263,5 +267,25 @@ public class CustomerServiceImpl implements CustomerService {
         if (!customer.getEmail().contains("@")) {
             throw new IllegalArgumentException("Invalid email format");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Customer> getByEmail(String email) {
+        // Validación básica y normalización
+        if (email == null || email.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return customerRepository.findByEmail(email.trim());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Customer> getByPhone(String phone) {
+        // Validación básica y normalización
+        if (phone == null || phone.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return customerRepository.findByPhone(phone.trim());
     }
 }

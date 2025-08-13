@@ -110,6 +110,21 @@ public interface CustomerService {
 
     /**
      * Busca clientes por término con paginación.
+     * Ahora busca por firstName, lastName, email, phone y address (contains, case-insensitive).
      */
     org.springframework.data.domain.Page<Customer> searchCustomers(String searchTerm, org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * Lookup exacto por email.
+     * @param email Email a buscar
+     * @return Optional con el cliente si existe
+     */
+    Optional<Customer> getByEmail(String email);
+
+    /**
+     * Lookup exacto por teléfono.
+     * @param phone Teléfono a buscar
+     * @return Optional con el cliente si existe
+     */
+    Optional<Customer> getByPhone(String phone);
 }

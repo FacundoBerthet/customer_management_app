@@ -17,6 +17,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
   List<Customer> findByFirstName(String firstName);
   List<Customer> findByLastName(String lastName);   
   Optional<Customer> findByEmail(String email);  // Retorna Optional.empty() si no encuentra
+  Optional<Customer> findByPhone(String phone);
+  List<Customer> findByAddressContaining(String address);
   List<Customer> findByFirstNameContaining(String firstName); // Búsqueda que contenga (LIKE %texto%)
   List<Customer> findByLastNameContaining(String lastName); // Búsqueda que contenga (LIKE %texto%)
   List<Customer> findByFirstNameIgnoreCase(String firstName); // Búsqueda que ignore mayúsculas/minúsculas
@@ -27,6 +29,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
   // Variante paginada de la búsqueda por nombre o apellido
   Page<Customer> findByFirstNameContainingOrLastNameContaining(String firstName, String lastName, Pageable pageable);
+
+  // Búsqueda paginada unificada (contains, case-insensitive) en múltiples campos
+  Page<Customer> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCaseOrAddressContainingIgnoreCase(
+      String firstName,
+      String lastName,
+      String email,
+      String phone,
+      String address,
+      Pageable pageable);
 
   // QUERIES NATIVAS
   // Sql nativo para consultas más complejas

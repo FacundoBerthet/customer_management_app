@@ -460,15 +460,16 @@ public class CustomerManagementAPP {
 
   @Operation(
     summary = "Search customers (paged)",
-    description = "Search by first or last name with pagination and sorting.\n\n" +
+    description = "Search by first name, last name, email, phone or address with pagination and sorting.\n\n" +
                   "Notes:\n" +
                   "- Max page size: 50 (larger values are capped).\n" +
                   "- Default sort: id,DESC.\n" +
                   "- Supported params: q (search text), page (0..N), size (1..50), sort (field,ASC|DESC).\n\n" +
                   "Examples:\n" +
                   "- GET /api/customers/search/page?q=john&page=0&size=10\n" +
-                  "- GET /api/customers/search/page?q=gar&sort=lastName,ASC\n" +
-                  "- GET /api/customers/search/page?q=ana&sort=lastName,ASC&sort=firstName,DESC"
+                  "- GET /api/customers/search/page?q=gmail.com&sort=lastName,ASC\n" +
+                  "- GET /api/customers/search/page?q=742%20Evergreen\n" +
+                  "- GET /api/customers/search/page?q=123-4567&sort=firstName,DESC"
   )
   @ApiResponses(value = {
     @ApiResponse(
@@ -523,5 +524,37 @@ public class CustomerManagementAPP {
         page.isFirst(),
         page.isLast()
     );
+  }
+
+  // Buscar cliente por email exacto - /api/customers/by-email
+  @Operation(summary = "Get customer by email", description = "Lookup a customer by exact email")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Customer found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping("/by-email")
+  public ResponseEntity<CustomerResponse> getByEmail(@Parameter(description = "Exact email", example = "john.doe@example.com") @RequestParam("email") String email) {
+    // Normalizo y delego al Service
+    return customerService.getByEmail(email)
+        .map(c -> ResponseEntity.ok(CustomerMapper.toResponse(c)))
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  // Buscar cliente por teléfono exacto - /api/customers/by-phone
+  @Operation(summary = "Get customer by phone", description = "Lookup a customer by exact phone number")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Customer found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.example.customer_management_app.dto.CustomerResponse.class))),
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @GetMapping("/by-phone")
+  public ResponseEntity<CustomerResponse> getByPhone(@Parameter(description = "Exact phone", example = "123-4567") @RequestParam("phone") String phone) {
+    // Normalizo y delego al Service
+    return customerService.getByPhone(phone)
+        .map(c -> ResponseEntity.ok(CustomerMapper.toResponse(c)))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 }
