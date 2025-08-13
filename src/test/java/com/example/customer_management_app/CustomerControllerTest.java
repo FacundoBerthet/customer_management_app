@@ -2,7 +2,6 @@ package com.example.customer_management_app;
 
 import com.example.customer_management_app.dto.CustomerRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,6 @@ class CustomerControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper; // Para serializar objetos a JSON
-
-    @BeforeEach
-    void cleanDatabase() {
-        // Limpio la base antes de cada test para datos repetibles
-        customerRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("POST /api/customers -> 201 Created")
