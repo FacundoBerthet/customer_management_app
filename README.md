@@ -1,179 +1,100 @@
-# Customer Management Application
+# Customer Management App
 
-A comprehensive Spring Boot application for managing customer data with a complete REST API, data persistence, and validation features.
+This is a small Spring Boot REST API to manage customers. I built it to practice Java, Spring, PostgreSQL, and API documentation.
 
-## Overview
+## What it uses
+- Java 17
+- Spring Boot 3.5 (Web, Data JPA, Validation)
+- PostgreSQL
+- Maven
+- OpenAPI/Swagger UI (springdoc)
+- Flyway for database migrations
 
-This project demonstrates a full-stack Spring Boot application implementing modern enterprise patterns including JPA for data persistence, Bean Validation for data integrity, and RESTful web services for client interaction.
-
-## Technologies Used
-
-- **Java 17**
-- **Spring Boot 3.5.4**
-- **Spring Data JPA**
-- **Spring Web**
-- **Spring Boot Validation**
-- **H2 Database** (in-memory)
-- **Maven** (build tool)
-
-## Features Implemented
-
-### Data Model
-- Customer entity with comprehensive fields including personal information, contact details, and audit timestamps
-- Automatic timestamp management for creation and modification tracking
-- Bean Validation annotations for data integrity
-
-### Data Persistence
-- JPA repository with CRUD operations
-- Custom query methods using Spring Data JPA naming conventions
-- Advanced search capabilities including partial text matching and case-insensitive searches
-- Native SQL queries for complex operations
-- Support for existence checks and aggregate functions
-
-### REST API
-Complete RESTful web service supporting:
-- **GET** `/api/customers` - Retrieve all customers
-- **GET** `/api/customers/{id}` - Retrieve customer by ID
-- **POST** `/api/customers` - Create new customer
-- **PUT** `/api/customers/{id}` - Update existing customer
-- **DELETE** `/api/customers/{id}` - Delete customer
-- **GET** `/api/customers/search/firstname/{firstName}` - Search by first name
-- **GET** `/api/customers/search/lastname/{lastName}` - Search by last name
-- **GET** `/api/customers/search/contains/{name}` - Search by name containing text
-- **GET** `/api/customers/exists/email/{email}` - Check email existence
-- **GET** `/api/customers/count/lastname/{lastName}` - Count customers by last name
-- **GET** `/api/customers/stats` - Retrieve application statistics
-
-### Validation
-- Server-side validation using Bean Validation annotations
-- Email format validation
-- Required field validation
-- String length constraints
-- Phone number pattern validation
-
-### Database Features
-- Automatic table creation and schema management
-- Optimized queries for performance
-- Support for both JPQL and native SQL queries
-- Database-level constraints and indexing
-
-## Project Structure
-
-```
-src/
-├── main/
-│   ├── java/
-│   │   └── com/example/customer_management_app/
-│   │       ├── Customer.java                    # Entity model
-│   │       ├── CustomerRepository.java          # Data access layer
-│   │       └── CustomerManagementAPP.java       # REST controller & main class
-│   └── resources/
-│       └── application.properties              # Configuration
-└── test/
-    └── java/
-        └── com/example/customer_management_app/
-            └── CustomerManagementAppApplicationTests.java
-```
-
-## Getting Started
-
-### Prerequisites
-- Java 17 or higher
-- Maven 3.6 or higher
-
-### Running the Application
-
-1. Clone the repository
-2. Navigate to the project directory
-3. Run the application:
+## How to run (dev)
+1) Make sure you have Java 17 and a PostgreSQL server running.
+2) Create a database (example name: `customerdb`). Flyway will create the tables.
+3) Set your database user and password in `src/main/resources/application-dev.properties`.
+4) Start the app:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-The application will start on `http://localhost:8080`
+5) Open Swagger UI in your browser:
+- http://localhost:8080/swagger-ui.html
 
-### Testing the API
+## Using Swagger (testing the API)
+Swagger UI is the place where you can try the API without extra tools.
+- You can see all endpoints, their methods (GET, POST, etc.), and paths.
+- It shows the parameters you can send (like page, size, q) and the response codes.
+- It shows the request and response models.
+- You can click “Try it out”, fill the fields, and execute real requests. The response appears on the page.
 
-You can test the REST endpoints using curl or any HTTP client:
+## What the API does
+- Create, read, update, and delete customers.
+- List customers with pagination.
+- Search customers by text (name, last name, email, phone, address).
+- Look up a customer by email or phone.
 
-```bash
-# Get all customers
-curl http://localhost:8080/api/customers
+For details and examples, see Swagger UI.
 
-# Create a new customer
-curl -X POST http://localhost:8080/api/customers \
-  -H "Content-Type: application/json" \
-  -d '{"firstName":"John","lastName":"Doe","email":"john.doe@example.com"}'
+## Quick examples in Swagger
+- List customers (paged):
+  - Go to GET /api/customers/page
+  - page = 0, size = 5, sort = id,desc
+  - Click “Try it out” and then “Execute”
+- Search customers:
+  - Go to GET /api/customers/search/page
+  - q = john, page = 0, size = 10
+  - Execute and see results
+- Lookup by email:
+  - Go to GET /api/customers/by-email
+  - email = john.doe@example.com
+  - Execute
 
-# Get customer by ID
-curl http://localhost:8080/api/customers/1
+## Pagination parameters
+- page: starts at 0
+- size: suggested 1..50 (the API caps the size to 50)
+- sort: example `id,desc` or `lastName,asc`
 
-# Search customers by last name
-curl http://localhost:8080/api/customers/search/lastname/Doe
-```
+## Database and migrations
+- The app uses Flyway. It runs SQL files from `src/main/resources/db/migration` when the app starts.
+- Current migrations:
+  - `V1__create_customers.sql`: creates the `customer` table and indexes.
+  - `V2__timestamps_defaults.sql`: sets default timestamps and fills missing values.
 
-## API Documentation
-
-### Customer Object Structure
+## Error responses (example)
+When something goes wrong, the API returns a JSON like this:
 
 ```json
 {
-  "id": 1,
-  "firstName": "John",
-  "lastName": "Doe", 
-  "email": "john.doe@example.com",
-  "phone": "555-1234",
-  "address": "123 Main St",
-  "createdAt": "2025-08-01T19:47:36.511651",
-  "updatedAt": "2025-08-01T19:47:36.511651"
+  "timestamp": "2025-08-10T12:34:56",
+  "path": "/api/customers/999",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Customer not found with ID: 999"
 }
 ```
 
-### Response Codes
-- `200 OK` - Successful retrieval or update
-- `201 Created` - Successful creation
-- `204 No Content` - Successful deletion
-- `400 Bad Request` - Validation errors
-- `404 Not Found` - Resource not found
+## Run tests
+```bash
+./mvnw test
+```
 
-## Database Schema
+## Change profile
+By default the app runs with the `dev` profile. To use another profile:
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=prod"
+```
+For `prod`, set environment variables for the database connection (DB_URL, DB_USER, DB_PASSWORD).
 
-The application uses an in-memory H2 database with the following customer table structure:
-
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | BIGINT | Primary Key, Auto-increment |
-| first_name | VARCHAR(255) | Not null, 2-40 characters |
-| last_name | VARCHAR(255) | Not null, 2-40 characters |
-| email | VARCHAR(255) | Not null, Unique, Valid email format |
-| phone | VARCHAR(255) | Optional, Pattern: XXX-XXXX |
-| address | VARCHAR(255) | Optional, Max 100 characters |
-| created_at | TIMESTAMP | Auto-generated |
-| updated_at | TIMESTAMP | Auto-updated |
-
-## Development Notes
-
-- The application uses constructor-based dependency injection
-- Validation is handled through Bean Validation annotations
-- The repository layer uses Spring Data JPA for automatic query generation
-- Native SQL queries are used for complex aggregation operations
-- CORS is enabled for cross-origin requests
-
-## Future Enhancements
-
-Potential areas for expansion:
-- Service layer implementation for business logic separation
-- Exception handling with custom error responses
-- Unit and integration testing
-- Relationship mapping with other entities
-- Frontend implementation
-- Security and authentication
-- Database migration to persistent storage
-
-## Build Information
-
-- **Version**: 0.0.1-SNAPSHOT
-- **Java Version**: 17
-- **Spring Boot Version**: 3.5.4
-- **Build Tool**: Maven
+## Troubleshooting
+- Database connection refused:
+  - Check PostgreSQL is running.
+  - Check the database name, user, and password.
+  - Make sure the database exists and you can connect with another tool.
+- Port 8080 already in use:
+  - Stop the other app using that port, or start this app on another port:
+  ```bash
+  ./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
+  ```
