@@ -95,6 +95,52 @@ By default the app runs with the `dev` profile. To use another profile:
 ```
 For `prod`, set environment variables for the database connection (DB_URL, DB_USER, DB_PASSWORD).
 
+## Run with Docker (easy mode)
+
+I added Docker to make it super easy to run the app and database. With Docker:
+- You don't need to install Java or PostgreSQL locally.
+- Everything runs in containers, so it works the same on any computer.
+- Anyone can clone this repo and run it with one command.
+
+### How to use
+1. Make sure Docker and Docker Compose are installed.
+2. In the project folder, run:
+  ```bash
+  docker compose up --build
+  ```
+3. Wait until you see logs saying the app started and migrations finished.
+4. Open Swagger: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+5. You can connect to the database with pgAdmin:
+  - Host: localhost
+  - Port: 5432
+  - User: appuser
+  - Password: apppassword
+  - Database: customerdb
+
+To stop everything:
+```bash
+docker compose down
+```
+
+If you only want to build the image (not run):
+```bash
+docker build -t customer-app:dev .
+```
+
+### Why Docker?
+- The app and database run together, no setup needed.
+- No more "works on my machine" problems.
+- I can test, develop, and show my project easily.
+- All dependencies and versions are controlled by Docker.
+
+If you have problems with ports (like 5432 busy), stop other Postgres servers or change the port in `docker-compose.yml`.
+
+## Actuator (dev)
+In dev profile we expose basic Actuator endpoints:
+- GET http://localhost:8080/actuator/health
+- GET http://localhost:8080/actuator/info
+- GET http://localhost:8080/actuator/metrics
+
 ## Troubleshooting
 - Database connection refused:
   - Check PostgreSQL is running.

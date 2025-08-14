@@ -1,0 +1,23 @@
+# Ignoro lo que no necesito dentro de la imagen
+# Acelera el build y reduce el contexto enviado al daemon
+
+# Maven / compilados
+/target
+
+# Control de versiones
+/.git
+/.gitignore
+
+# IDE / editor
+/.idea
+/.vscode
+*.iml
+
+# Logs y temporales
+/logs
+*.log
+*.tmp
+
+# Archivos del SO
+.DS_Store
+Thumbs.db

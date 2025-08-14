@@ -1,0 +1,44 @@
+# =============================================================
+# docker-compose para levantar Postgres + la app
+# -------------------------------------------------------------
+# Objetivo: un solo comando para probar el proyecto end-to-end
+# =============================================================
+
+services:
+  db:
+    image: postgres:16
+    container_name: customer-postgres
+    environment:
+      POSTGRES_DB: customerdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppassword
+    ports:
+      - "5432:5432" # expongo para poder conectar desde local si quiero
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d customerdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: customer-app
+    environment:
+      # Perfil prod dentro del contenedor (leerá application-prod.properties)
+      SPRING_PROFILES_ACTIVE: prod
+      # Credenciales y URL para que la app conecte a Postgres del compose
+      DB_URL: jdbc:postgresql://db:5432/customerdb
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      # Opcional: flags JVM
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
