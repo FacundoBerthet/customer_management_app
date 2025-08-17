@@ -11,8 +11,75 @@ body {
   text-align: center;
 }
 
+/* --------- MAIN NAVIGATION ----------------------------- */
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  background: #23272a;
+  padding: 1.2rem 0 1.2rem 0;
+  border-bottom: 2px solid #3a3f44;
+  margin-bottom: 2rem;
+}
+.main-nav a {
+  color: #00bcd4;
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 500;
+  padding: 0.3rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+.main-nav a:hover, .main-nav a.active {
+  background: #31363b;
+  color: #fff;
+}
 
-/* --------- ADD FORM ----------------------------- */
+
+/* ============================================================ */
+/* -------------------- HOME PAGE ----------------------------- */
+/* ============================================================ */
+.home-page {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+  padding: 2.5rem;
+  color: #e0e0e0;
+  text-align: center;
+}
+.home-page h1 {
+  color: #00bcd4;
+  font-size: 2.2rem;
+  margin-bottom: 1.2rem;
+}
+.home-page p {
+  font-size: 1.15rem;
+  color: #b0b0b0;
+}
+
+
+/* ============================================================ */
+/* ----------------- ADD CUSTOMER PAGE ------------------------ */
+/* ============================================================ */
+.add-customer-page {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+  padding: 2.5rem;
+  color: #e0e0e0;
+}
+.add-customer-page h1 {
+  color: #00bcd4;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
+}
+/* -------------------- ADD FORM ----------------------------- */
 .add-form-container{
   width: 100%;
 }
@@ -80,6 +147,28 @@ body {
   color: #ff5252;
 }
 
+/* ============================================================ */
+/* ----------------- EDIT CUSTOMER PAGE ----------------------- */
+/* ============================================================ */
+.edit-customer-page {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+  padding: 2.5rem;
+  color: #e0e0e0;
+}
+.edit-customer-page h1 {
+  color: #00bcd4;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
+}
+.edit-customer-page p {
+  font-size: 1.1rem;
+  color: #b0b0b0;
+}
 /* --------- CUSTOMER LIST ----------------------------- */
 .customer-list-container{
   width: 100%;
@@ -108,8 +197,6 @@ body {
   text-align: center;
   font-style: italic;
 }
-
-
 /* --------- CUSTOMER CARD ----------------------------- */
 .customer-card {
   width: 40%;
@@ -141,8 +228,6 @@ body {
   font-weight: 600;
   margin-right: 0.5em;
 }
-
-
 /* --------- TOP ALERT (CARTEL SUPERIOR) ----------------------------- */
 .top-alert {
   position: fixed;

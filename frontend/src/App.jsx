@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import './App.css';
 
-import CustomerList from './CustomerList.jsx'
-import CustomerForm from './CustomerForm.jsx'
+import Home from './Home.jsx';
+import AddCustomer from './AddCustomer.jsx';
+import EditCustomer from './EditCustomer.jsx';
+import CustomerList from './CustomerList.jsx';
+
 
 function App() {
   // Estado para la lista de clientes
@@ -24,7 +26,7 @@ function App() {
       phone: '987-6543',
       address: 'Av. Siempreviva 742'
     }
-  ])
+  ]);
 
   // Estado para la alerta superior
   const [alert, setAlert] = useState(null); // { type: 'success'|'error', message: string }
@@ -41,7 +43,7 @@ function App() {
   }
 
   return (
-    <>
+    <BrowserRouter>
       {/* Cartel superior de alerta */}
       {alert && (
         <div className={`top-alert ${alert.type}`}> 
@@ -49,14 +51,21 @@ function App() {
           <button className="top-alert-close" onClick={closeAlert}>×</button>
         </div>
       )}
-      <div className="add-form-container">
-        <CustomerForm onAddCustomer={addCustomer} />
-      </div>
-      <div className="customer-list-container">
-        <CustomerList customers={customers} />
-      </div>
-    </>
-  )
+      {/* Menú de navegación */}
+      <nav className="main-nav">
+        <Link to="/">Home</Link>
+        <Link to="/add">Add Customer</Link>
+        <Link to="/list">Customer List</Link>
+      </nav>
+      {/* Rutas */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/add" element={<AddCustomer onAddCustomer={addCustomer} />} />
+        <Route path="/list" element={<CustomerList customers={customers} />} />
+        <Route path="/edit/:id" element={<EditCustomer />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App
