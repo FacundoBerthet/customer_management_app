@@ -54,22 +54,24 @@ function CustomerForm({ onAddCustomer }) {
     // Renderiza el formulario y los mensajes de error debajo de cada campo
     return (
         <form className="customer-form" onSubmit={handleSubmit}>
-            <h2 className="customer-form-title">Agregar Cliente</h2>
-            {/* Campo Nombre */}
-            <input className="customer-form-input" name="firstName" placeholder="Nombre" value={form.firstName} onChange={handleChange} />
-            {errors.firstName && <div className="form-error">{errors.firstName}</div>}
-            {/* Campo Apellido */}
-            <input className="customer-form-input" name="lastName" placeholder="Apellido" value={form.lastName} onChange={handleChange} />
-            {errors.lastName && <div className="form-error">{errors.lastName}</div>}
-            {/* Campo Email */}
-            <input className="customer-form-input" name="email" placeholder="Email" value={form.email} onChange={handleChange} />
-            {errors.email && <div className="form-error">{errors.email}</div>}
-            {/* Campo Teléfono */}
-            <input className="customer-form-input" name="phone" placeholder="Teléfono" value={form.phone} onChange={handleChange} />
-            {/* Campo Dirección */}
-            <input className="customer-form-input" name="address" placeholder="Dirección" value={form.address} onChange={handleChange} />
-            {/* Botón para agregar cliente */}
-            <button className="customer-form-btn" type="submit">Agregar Cliente</button>
+            <h2 className="customer-form-title">Add Customer</h2>
+            {/* Info about required fields */}
+            <div className="customer-form-required-info">Fields marked with <span className="customer-form-required">*</span> are required.</div>
+            {/* First Name (required) */}
+            <input className="customer-form-input" name="firstName" placeholder="First Name*" value={form.firstName} onChange={handleChange} />
+            {errors.firstName && <div className="customer-form-error">{errors.firstName}</div>}
+            {/* Last Name (required) */}
+            <input className="customer-form-input" name="lastName" placeholder="Last Name*" value={form.lastName} onChange={handleChange} />
+            {errors.lastName && <div className="customer-form-error">{errors.lastName}</div>}
+            {/* Email (required) */}
+            <input className="customer-form-input" name="email" placeholder="Email*" value={form.email} onChange={handleChange} />
+            {errors.email && <div className="customer-form-error">{errors.email}</div>}
+            {/* Phone */}
+            <input className="customer-form-input" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} />
+            {/* Address */}
+            <input className="customer-form-input" name="address" placeholder="Address" value={form.address} onChange={handleChange} />
+            {/* Submit button */}
+            <button className="customer-form-btn" type="submit">Add Customer</button>
         </form>
     );
 }
