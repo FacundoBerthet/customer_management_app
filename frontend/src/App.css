@@ -1,3 +1,115 @@
+.customer-form {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.form-title {
+  color: #e0e0e0;
+  letter-spacing: 2px;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.form-input {
+  padding: 0.7rem;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  background: #23272a;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #00bcd4;
+}
+
+.form-btn {
+  padding: 0.7rem 1.2rem;
+  background: #00bcd4;
+  color: #23272a;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.form-btn:hover {
+  background: #0097a7;
+}
+/* Estilos para Customer Management App */
+
+body {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  background: #23272a;
+  margin: 0;
+  padding: 0;
+}
+
+.list {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+}
+
+.list-title {
+  color: #e0e0e0;
+  letter-spacing: 2px;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.list-empty {
+  color: #b0b0b0;
+  text-align: center;
+  font-style: italic;
+}
+
+.card {
+  border: 1.5px solid #444b52;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, #23272a 80%, #31363b 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: box-shadow 0.2s;
+}
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+}
+
+.card-title {
+  margin: 0 0 0.7rem 0;
+  color: #00bcd4;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.card-info {
+  margin: 0.2rem 0;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+.card-info span {
+  color: #b0b0b0;
+  font-weight: 600;
+  margin-right: 0.5em;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
