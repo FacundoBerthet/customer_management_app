@@ -5,11 +5,13 @@ import Customer from "./Customer";
 function CustomerList({ customers }) {
     return (
     <div className="customer-list">
-            <h2 className="customer-list-title">Customer List</h2>
-            {customers.length === 0 ?
-        (<p className="customer-list-empty">No customers found.</p>)
+        <h2 className="customer-list-title">Customer List</h2>
+            <div className="customer-list-content">
+                {customers.length === 0 ?
+                (<p className="customer-list-empty">No customers found.</p>)
                 :
                 (customers.map((c, i) => (<Customer key={i} {...c} />)))}
+            </div>
         </div>
     );
 }
