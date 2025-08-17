@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Saludo from './saludo.jsx'
+
 import CustomerList from './CustomerList.jsx'
 import CustomerForm from './CustomerForm.jsx'
 
@@ -30,9 +30,10 @@ function App() {
 
   return (
     <>
-      <div>
-        
+      <div className="add-form-container">
         <CustomerForm onAddCustomer={addCustomer} />
+      </div>
+      <div className="customer-list-container">
         <CustomerList customers={customers} />
       </div>
     </>
