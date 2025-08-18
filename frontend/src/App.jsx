@@ -1,12 +1,13 @@
-
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
 import './App.css';
 
 import Home from './Home.jsx';
 import AddCustomer from './AddCustomer.jsx';
 import EditCustomer from './EditCustomer.jsx';
 import CustomerList from './CustomerList.jsx';
+import logoIcon from './assets/icons/icon.png';
+import menuToggleIcon from './assets/icons/menu_toggle.png';
 
 
 function App() {
@@ -42,6 +43,12 @@ function App() {
     setAlert(null);
   }
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function handleNavClick() {
+    setMenuOpen(false);
+  }
+
   return (
     <BrowserRouter>
       {/* Cartel superior de alerta */}
@@ -53,9 +60,25 @@ function App() {
       )}
       {/* Menú de navegación */}
       <nav className="main-nav">
-        <Link to="/">Home</Link>
-        <Link to="/add">Add Customer</Link>
-        <Link to="/list">Customer List</Link>
+        <div className="nav-left">
+          <Link to="/" className="nav-logo" onClick={handleNavClick}>
+            <img src={logoIcon} alt="Home" />
+            <span>Customer App</span>
+          </Link>
+        </div>
+        <button
+          className="nav-toggle"
+          aria-label="Toggle menu"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <img src={menuToggleIcon} alt="Menu" />
+        </button>
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          <NavLink to="/" onClick={handleNavClick}>Home</NavLink>
+          <NavLink to="/add" onClick={handleNavClick}>Add Customer</NavLink>
+          <NavLink to="/list" onClick={handleNavClick}>Customer List</NavLink>
+          <NavLink to="/edit/1" onClick={handleNavClick}>Edit Customer</NavLink>
+        </div>
       </nav>
       {/* Rutas */}
       <Routes>
