@@ -124,20 +124,22 @@ body {
 /* ============================================================ */
 /* ----------------- ADD CUSTOMER PAGE ------------------------ */
 /* ============================================================ */
-.add-customer-page {
-  max-width: 700px;
-  margin: 3rem auto;
-  background: #2c3136;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  border: 2px solid #3a3f44;
-  padding: 2.5rem;
-  color: #e0e0e0;
+/* --------------- FORM-TUTORIAL ------------------------------ */
+.customer-form-help {
+  margin: 0.2rem 0 1rem 0;
+  padding: 0.8rem 1rem;
+  background: #23272a;
+  border: 1px solid #3a3f44;
+  border-radius: 8px;
+  color: #b0b0b0;
+  text-align: left;
 }
-.add-customer-page h1 {
-  color: #00bcd4;
-  font-size: 2rem;
-  margin-bottom: 1.2rem;
+.customer-form-tutorial {
+  margin: 0.2rem 0 0 1rem;
+  padding-left: 1rem;
+}
+.customer-form-tutorial li {
+  margin: 0.3rem 0;
 }
 /* -------------------- ADD FORM ----------------------------- */
 .add-form-container{
@@ -252,6 +254,24 @@ body {
 }
 /* ---------- MEDIA QUERIES ----------------------------- */
 @media (max-width: 576px) {
+  /* --------------- FORM-TUTORIAL ------------------------------ */
+  .customer-form-help {
+    width: 92%;
+    margin: 0.2rem auto;
+    padding: 0.8rem 0.3rem;
+    background: #23272a;
+    border: 1px solid #3a3f44;
+    border-radius: 8px;
+    color: #b0b0b0;
+    text-align: left;
+  }
+  .customer-form-tutorial {
+    margin: 0.2rem 0 0 1rem;
+    padding-left: 0.6rem;
+  }
+  .customer-form-tutorial li {
+    margin: 0.3rem 0;
+  }
   /* ------ ADD FORM ------ */
   .customer-form {
     width: 95%;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 //Componente que permite agregar un nuevo cliente
-function CustomerForm({ onAddCustomer }) {
+function CustomerForm({ onAddCustomer, tutorial }) {
     // Estado para los campos del formulario
     const [form, setForm] = useState({
         firstName: '',
@@ -55,6 +55,12 @@ function CustomerForm({ onAddCustomer }) {
     return (
         <form className="customer-form" onSubmit={handleSubmit}>
             <h2 className="customer-form-title">Add Customer</h2>
+            {/* Tutorial debajo del título (opcional) */}
+            {tutorial && (
+                <div className="customer-form-help">
+                    {tutorial}
+                </div>
+            )}
             {/* Info about required fields */}
             <div className="customer-form-required-info">Fields marked with <span className="customer-form-required">*</span> are required.</div>
             {/* First Name (required) */}
