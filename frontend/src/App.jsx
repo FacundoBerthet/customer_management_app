@@ -51,11 +51,21 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* Cartel superior de alerta */}
+      {/* Alerta inferior fija (toast) */}
       {alert && (
-        <div className={`top-alert ${alert.type}`}> 
+        <div
+          className={`toast-alert ${alert.type}`}
+          role="status"
+          aria-live="polite"
+        > 
           <span>{alert.message}</span>
-          <button className="top-alert-close" onClick={closeAlert}>×</button>
+          <button
+            className="top-alert-close"
+            onClick={closeAlert}
+            aria-label="Close notification"
+          >
+            ×
+          </button>
         </div>
       )}
       {/* Menú de navegación */}
