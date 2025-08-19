@@ -13,7 +13,8 @@ services:
       POSTGRES_USER: appuser
       POSTGRES_PASSWORD: apppassword
     ports:
-      - "5432:5432" # expongo para poder conectar desde local si quiero
+      # Mapeo HOST:CONTAINER -> uso 5433 en el host para evitar conflicto con PostgreSQL local en 5432
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -23,7 +24,9 @@ services:
       retries: 5
 
   app:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: customer-app
     environment:
       # Perfil prod dentro del contenedor (leerá application-prod.properties)
