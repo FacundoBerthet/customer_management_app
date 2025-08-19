@@ -29,7 +29,6 @@ services:
       dockerfile: Dockerfile
     container_name: customer-app
     environment:
-      # Perfil prod dentro del contenedor (leerá application-prod.properties)
       SPRING_PROFILES_ACTIVE: prod
       # Credenciales y URL para que la app conecte a Postgres del compose
       DB_URL: jdbc:postgresql://db:5432/customerdb
