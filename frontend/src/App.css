@@ -199,6 +199,9 @@ body {
   border-radius: 3px;
   text-align: left;
 }
+.customer-form-error-top {
+  margin-bottom: 0.5rem;
+}
 .customer-form-required-info {
   color: #b0b0b0;
   font-size: 0.9rem;
@@ -406,6 +409,34 @@ body {
   margin: 2rem;
   text-align: center;
 }
+/* --------- LIST TOOLBAR (SEARCH + PAGER) ------------- */
+.customer-list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem 1rem;
+  gap: 0.6rem;
+}
+.customer-list-filterbox { display: flex; align-items: center; gap: 0.8rem; }
+.customer-list-sort { display: inline-flex; align-items: center; gap: 0.4rem; }
+.customer-list-sort-label { color: #b0b0b0; font-size: 0.95rem; }
+.customer-list-sort-select {
+  padding: 0.5rem 0.6rem;
+  background: #23272a;
+  color: #e0e0e0;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+}
+.customer-list-search-input {
+  max-width: 420px;
+}
+.customer-list-pageinfo {
+  color: #b0b0b0;
+}
+.customer-list-pager {
+  display: flex;
+  gap: 0.5rem;
+}
 .customer-list-content {
   display: flex;
   justify-content: space-around;
@@ -447,6 +478,7 @@ body {
   font-weight: 600;
   margin-right: 0.5em;
 }
+.customer-card-actions { margin-top: 0.8rem; text-align: right; }
 /* ---------- MEDIA QUERIES ----------------------------- */
 @media (max-width: 576px) {
   /* ---- CUSTOMER LIST ---- */
@@ -457,6 +489,10 @@ body {
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     border: 2px solid #3a3f44;
   }
+  .customer-list-toolbar { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  .customer-list-filterbox { flex-direction: column; align-items: stretch; gap: 0.4rem; }
+  .customer-list-sort { justify-content: flex-start; }
+  .customer-list-search-input { max-width: 100%; }
   .customer-list-content {
     display: inline;
   }
@@ -486,6 +522,7 @@ body {
     color: #e0e0e0;
     font-size: 1rem;
   }
+.customer-card-actions { margin: 0.8rem 0.6rem 0.6rem; text-align: right; }
 .customer-card-info span {
     color: #b0b0b0;
     font-weight: 600;
@@ -514,5 +551,34 @@ body {
 }
 .edit-customer-page p {
   font-size: 1.1rem;
+  color: #b0b0b0;
+}
+/* --------- EDIT FORM LAYOUT & STATES ----------------- */
+.edit-form {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+.edit-actions { display: flex; gap: 0.6rem; }
+.edit-btn-danger { background: #e53935; color: #fff; }
+.edit-error-text { color: #ff5252; }
+
+/* --------- EDIT SEARCH (within Edit page) ------------- */
+.edit-search-status {
+  margin-top: 0.8rem;
+  min-height: 1.2rem;
+}
+.edit-search-loading { color: #b0b0b0; }
+.edit-search-results { margin-top: 1rem; }
+.edit-search-input { max-width: 480px; }
+.edit-card-actions { margin-top: 0.8rem; text-align: right; }
+.edit-search-pager {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.edit-search-pageinfo {
+  align-self: center;
   color: #b0b0b0;
 }

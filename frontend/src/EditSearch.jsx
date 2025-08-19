@@ -72,18 +72,17 @@ function EditSearch() {
     <div className="edit-customer-page">
       <h1>Find a Customer to Edit</h1>
       <input
-        className="customer-form-input"
+        className="customer-form-input edit-search-input"
         placeholder="Search by name, email, phone, or address"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        style={{ maxWidth: 480 }}
       />
-      <div style={{ marginTop: '0.8rem', minHeight: '1.2rem' }}>
-        {loading && <span style={{ color: '#b0b0b0' }}>Searching…</span>}
-        {error && <span style={{ color: '#ff5252' }}>{error}</span>}
+      <div className="edit-search-status">
+        {loading && <span className="edit-search-loading">Searching…</span>}
+        {error && <span className="edit-error-text">{error}</span>}
       </div>
 
-      <div className="customer-list-content" style={{ marginTop: '1rem' }}>
+      <div className="customer-list-content edit-search-results">
         {!canSearch && <p className="customer-list-empty">Type something to search.</p>}
         {canSearch && !loading && !hasResults && <p className="customer-list-empty">No matches found.</p>}
         {hasResults && pageData.content.map((c) => (
@@ -92,7 +91,7 @@ function EditSearch() {
             <p className="customer-card-info"><span>Email:</span> {c.email}</p>
             <p className="customer-card-info"><span>Phone:</span> {c.phone}</p>
             <p className="customer-card-info"><span>Address:</span> {c.address}</p>
-            <div style={{ marginTop: '0.8rem', textAlign: 'right' }}>
+            <div className="edit-card-actions">
               <Link to={`/edit/${c.id}`} className="home-card-link">Edit</Link>
             </div>
           </div>
@@ -101,7 +100,7 @@ function EditSearch() {
 
       {/* Paginación simple */}
   {hasResults && (
-        <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginTop: '1rem' }}>
+        <div className="edit-search-pager">
           <button
             className="customer-form-btn"
     disabled={loading || currentIndex <= 0}
@@ -109,7 +108,7 @@ function EditSearch() {
           >
             Prev
           </button>
-          <span style={{ alignSelf: 'center', color: '#b0b0b0' }}>
+          <span className="edit-search-pageinfo">
     Page {currentIndex + 1} of {totalPagesSafe}
           </span>
           <button

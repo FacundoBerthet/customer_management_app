@@ -9,7 +9,7 @@ function Customer({ id, firstName, lastName, email, phone, address }) {
             <p className="customer-card-info"><span>Phone:</span> {phone}</p>
             <p className="customer-card-info"><span>Address:</span> {address}</p>
             {id != null && (
-                <div style={{ marginTop: '0.8rem', textAlign: 'right' }}>
+                <div className="customer-card-actions">
                     <Link to={`/edit/${id}`} className="home-card-link">Edit</Link>
                 </div>
             )}

@@ -85,7 +85,7 @@ function CustomerForm({ onAddCustomer, tutorial }) {
             )}
             {/* Error de API en bloque superior (si existe) */}
             {apiError && (
-                <div className="customer-form-error" role="alert" aria-live="polite" style={{ marginBottom: '0.5rem' }}>
+                <div className="customer-form-error customer-form-error-top" role="alert" aria-live="polite">
                     {apiError}
                 </div>
             )}
