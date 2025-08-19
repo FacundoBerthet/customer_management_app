@@ -42,5 +42,15 @@ services:
       db:
         condition: service_healthy
 
+  front:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: customer-front
+    ports:
+      - "8081:80"
+    depends_on:
+      - app
+
 volumes:
   db_data:

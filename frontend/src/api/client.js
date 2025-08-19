@@ -1,8 +1,11 @@
 //Cliente API para conectar el frontend con el backend Spring Boot
 
 
-//BASE_URL es la URL base para la API de clientes
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/customers';
+// BASE_URL es la URL base para la API de clientes.
+// - En dev: usar VITE_API_URL en .env (por ej. http://localhost:8080/api)
+// - En prod (Nginx): usamos ruta relativa '/api' para aprovechar el reverse proxy
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = `${API_BASE.replace(/\/$/, '')}/customers`;
 
 // Helper para manejar errores y parsear JSON
 async function fetchJson(url, options = {}) {
