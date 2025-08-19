@@ -12,6 +12,10 @@ function CustomerForm({ onAddCustomer, tutorial }) {
     });
     // Estado para los mensajes de error de validación
     const [errors, setErrors] = useState({});
+    // Estado de envío para evitar clicks múltiples y dar feedback
+    const [submitting, setSubmitting] = useState(false);
+    // Error genérico de API (por ejemplo 409 email duplicado, 400 validación backend, etc.)
+    const [apiError, setApiError] = useState(null);
 
     // Función que valida los campos del formulario
     function validate(form) {
@@ -37,7 +41,7 @@ function CustomerForm({ onAddCustomer, tutorial }) {
     }
 
     // Manejador de envío del formulario
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault(); // Previene el comportamiento por defecto
         const validationErrors = validate(form); // Valida los campos
         // Si hay errores, los muestra y no envía el formulario
@@ -45,10 +49,28 @@ function CustomerForm({ onAddCustomer, tutorial }) {
             setErrors(validationErrors);
             return;
         }
-        // Si no hay errores, agrega el cliente y limpia el formulario
-        onAddCustomer(form);
-        setForm({ firstName: '', lastName: '', email: '', phone: '', address: '' });
-        setErrors({});
+        // Si no hay errores, intenta crear el cliente en el backend
+        try {
+            setSubmitting(true);
+            setApiError(null);
+            await onAddCustomer(form);
+            // Si todo salió bien, limpio el formulario
+            setForm({ firstName: '', lastName: '', email: '', phone: '', address: '' });
+            setErrors({});
+        } catch (err) {
+            // Mensaje simple para el usuario; luego afinamos según status
+            const status = err?.status;
+            if (status === 409) {
+                setApiError('Email already exists. Please use another one.');
+            } else if (status === 400) {
+                // Si el backend envía detalles de validación, podemos mostrarlos aquí
+                setApiError('Some fields are invalid. Please review and try again.');
+            } else {
+                setApiError('Unexpected error. Please try again later.');
+            }
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     // Renderiza el formulario y los mensajes de error debajo de cada campo
@@ -59,6 +81,12 @@ function CustomerForm({ onAddCustomer, tutorial }) {
             {tutorial && (
                 <div className="customer-form-help">
                     {tutorial}
+                </div>
+            )}
+            {/* Error de API en bloque superior (si existe) */}
+            {apiError && (
+                <div className="customer-form-error" role="alert" aria-live="polite" style={{ marginBottom: '0.5rem' }}>
+                    {apiError}
                 </div>
             )}
             {/* Info about required fields */}
@@ -77,7 +105,9 @@ function CustomerForm({ onAddCustomer, tutorial }) {
             {/* Address */}
             <input className="customer-form-input" name="address" placeholder="Address" value={form.address} onChange={handleChange} />
             {/* Submit button */}
-            <button className="customer-form-btn" type="submit">Add Customer</button>
+            <button className="customer-form-btn" type="submit" disabled={submitting}>
+                {submitting ? 'Adding…' : 'Add Customer'}
+            </button>
         </form>
     );
 }

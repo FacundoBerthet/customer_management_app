@@ -1,6 +1,4 @@
 // Componente que muestra una lista de clientes
-// Paso 1 (auto-carga): agrego useEffect para consultar el backend
-// automáticamente al montar el componente (sin romper el botón manual).
 import { useState, useEffect } from 'react';
 import Customer from "./Customer";
 import { getCustomers } from './api/client';

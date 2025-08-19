@@ -283,6 +283,31 @@ body {
   color: #b71c1c;
   border-top: 2px solid #e53935;
 }
+/* Barra de progreso para el toast (8s) */
+.toast-alert {
+  position: fixed;
+}
+.toast-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: currentColor; /* usa el color del texto para integrarse en success/error */
+  opacity: 0.6;
+  width: 0%;
+  animation: toastProgress 8s linear forwards;
+}
+/* Afinar colores según tipo, por contraste */
+.toast-alert.success .toast-progress {
+  background: #1b5e20; /* verde oscuro del texto success */
+}
+.toast-alert.error .toast-progress {
+  background: #b71c1c; /* rojo del texto error */
+}
+@keyframes toastProgress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateX(-50%) translateY(30px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
