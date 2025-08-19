@@ -6,6 +6,7 @@ import Home from './Home.jsx';
 import AddCustomer from './AddCustomer.jsx';
 import EditCustomer from './EditCustomer.jsx';
 import CustomerList from './CustomerList.jsx';
+import EditSearch from './EditSearch.jsx';
 import logoIcon from './assets/icons/icon.png';
 import menuToggleIcon from './assets/icons/menu_toggle.png';
 import { createCustomer } from './api/client';
@@ -99,7 +100,7 @@ function App() {
           <NavLink to="/" onClick={handleNavClick}>Home</NavLink>
           <NavLink to="/add" onClick={handleNavClick}>Add Customer</NavLink>
           <NavLink to="/list" onClick={handleNavClick}>Customer List</NavLink>
-          <NavLink to="/edit/1" onClick={handleNavClick}>Edit Customer</NavLink>
+          <NavLink to="/edit" onClick={handleNavClick}>Edit Customer</NavLink>
         </div>
       </nav>
       {/* Rutas */}
@@ -107,6 +108,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/add" element={<AddCustomer onAddCustomer={addCustomer} />} />
         <Route path="/list" element={<CustomerList customers={customers} />} />
+  <Route path="/edit" element={<EditSearch />} />
   <Route path="/edit/:id" element={<EditCustomer onNotify={notify} />} />
       </Routes>
     </BrowserRouter>

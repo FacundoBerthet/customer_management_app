@@ -10,6 +10,7 @@ function EditCustomer({ onNotify }) {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         let ignore = false;
@@ -52,15 +53,19 @@ function EditCustomer({ onNotify }) {
         }
     }
 
-    // NOTA: Según tu requerimiento, el delete se hará solo desde esta pestaña más adelante;
-    // dejamos el hook listo pero sin botón visible aún.
     async function handleDelete() {
+        const confirmed = window.confirm('Are you sure you want to delete this customer? This action cannot be undone.');
+        if (!confirmed) return;
         try {
+            setDeleting(true);
             await deleteCustomer(id);
             onNotify?.('success', 'Customer deleted successfully!');
-            navigate('/list');
-        } catch {
+            // Volvemos al buscador de edición para seguir trabajando allí
+            navigate('/edit');
+        } catch (err) {
             onNotify?.('error', 'Failed to delete customer.');
+        } finally {
+            setDeleting(false);
         }
     }
 
@@ -77,9 +82,18 @@ function EditCustomer({ onNotify }) {
                     <input className="customer-form-input" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} />
                     <input className="customer-form-input" name="address" placeholder="Address" value={form.address} onChange={handleChange} />
                     <div style={{ display: 'flex', gap: '0.6rem' }}>
-                        <button className="customer-form-btn" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
-                        {/* Más adelante: botón de delete visibile aquí */}
-                        {/* <button className="customer-form-btn" type="button" onClick={handleDelete} style={{ background: '#e53935', color: '#fff' }}>Delete</button> */}
+                        <button className="customer-form-btn" type="submit" disabled={saving || deleting}>
+                            {saving ? 'Saving…' : 'Save Changes'}
+                        </button>
+                        <button
+                            className="customer-form-btn"
+                            type="button"
+                            onClick={handleDelete}
+                            disabled={saving || deleting}
+                            style={{ background: '#e53935', color: '#fff' }}
+                        >
+                            {deleting ? 'Deleting…' : 'Delete'}
+                        </button>
                     </div>
                 </form>
             )}
