@@ -11,6 +11,8 @@ function Customer({ id, firstName, lastName, email, phone, address }) {
             {id != null && (
                 <div className="customer-card-actions">
                     <Link to={`/edit/${id}`} className="home-card-link">Edit</Link>
+                    {' '}
+                    <Link to={`/details/${id}`} className="home-card-link">Details</Link>
                 </div>
             )}
         </div>

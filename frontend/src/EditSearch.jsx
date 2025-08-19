@@ -93,6 +93,8 @@ function EditSearch() {
             <p className="customer-card-info"><span>Address:</span> {c.address}</p>
             <div className="edit-card-actions">
               <Link to={`/edit/${c.id}`} className="home-card-link">Edit</Link>
+              {' '}
+              <Link to={`/details/${c.id}`} className="home-card-link">Details</Link>
             </div>
           </div>
         ))}

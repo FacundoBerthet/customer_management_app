@@ -7,6 +7,7 @@ import AddCustomer from './AddCustomer.jsx';
 import EditCustomer from './EditCustomer.jsx';
 import CustomerList from './CustomerList.jsx';
 import EditSearch from './EditSearch.jsx';
+import CustomerDetails from './CustomerDetails.jsx';
 import logoIcon from './assets/icons/icon.png';
 import menuToggleIcon from './assets/icons/menu_toggle.png';
 import { createCustomer } from './api/client';
@@ -110,6 +111,7 @@ function App() {
         <Route path="/list" element={<CustomerList customers={customers} />} />
   <Route path="/edit" element={<EditSearch />} />
   <Route path="/edit/:id" element={<EditCustomer onNotify={notify} />} />
+  <Route path="/details/:id" element={<CustomerDetails />} />
       </Routes>
     </BrowserRouter>
   );

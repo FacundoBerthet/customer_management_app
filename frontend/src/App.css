@@ -582,3 +582,29 @@ body {
   align-self: center;
   color: #b0b0b0;
 }
+
+
+/* ============================================================ */
+/* ----------------- CUSTOMER DETAILS PAGE -------------------- */
+/* ============================================================ */
+.details-page {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: #2c3136;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 2px solid #3a3f44;
+  padding: 2.2rem;
+  color: #e0e0e0;
+}
+.details-page h1 { color: #00bcd4; font-size: 2rem; margin-bottom: 1.2rem; }
+.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem 1rem; }
+.details-row { display: contents; }
+.details-label { color: #b0b0b0; font-weight: 600; text-align: right; padding-right: 0.6rem; }
+.details-value { color: #e0e0e0; text-align: left; }
+.details-actions { margin-top: 1.2rem; display: flex; gap: 0.8rem; justify-content: flex-end; }
+@media (max-width: 576px) {
+  .details-page { margin: 2rem auto; padding: 1.2rem; }
+  .details-grid { grid-template-columns: 1fr; }
+  .details-label { text-align: left; padding-right: 0; }
+}
