@@ -1,153 +1,81 @@
 # Customer Management App
 
-This is a small Spring Boot REST API to manage customers. I built it to practice Java, Spring, PostgreSQL, and API documentation.
+Simple full‑stack app to manage customers. The backend is Spring Boot with PostgreSQL and Flyway. The frontend is React (Vite) served by Nginx. You can run everything with Docker Compose.
 
-## What it uses
-- Java 17
-- Spring Boot 3.5 (Web, Data JPA, Validation)
-- PostgreSQL
-- Maven
-- OpenAPI/Swagger UI (springdoc)
-- Flyway for database migrations
+![Home page](docs/images/home_page.png)
 
-## How to run (dev)
-1) Make sure you have Java 17 and a PostgreSQL server running.
-2) Create a database (example name: `customerdb`). Flyway will create the tables.
-3) Set your database user and password in `src/main/resources/application-dev.properties`.
-4) Start the app:
+## Table of Contents
+
+- [What you can do](#what-you-can-do)
+- [Documentation](#documentation)
+- [Tiny Quickstart](#tiny-quickstart)
+- [Dev (without Docker)](#dev-without-docker)
+- [Architecture](#architecture)
+- [Screenshots](#screenshots)
+
+## What you can do
+
+- Create, edit, and delete customers
+- List customers with pagination and sorting
+- Search customers by name, email, phone, or address
+- View full customer details
+- Try the API in Swagger UI
+
+## Documentation
+
+- Frontend
+  - [Frontend Overview](front/README.md)
+  - [Frontend Documentation](front/docs/)
+
+- Backend
+  - [Backend Overview](backend/README.md)
+  - [Backend Documentation](backend/docs/)
+
+More pages (setup, API examples, Docker tips, troubleshooting) will be added later.
+
+## Tiny Quickstart
+
+Run the whole stack with Docker:
 
 ```bash
-./mvnw spring-boot:run
+docker compose up -d --build
 ```
 
-5) Open Swagger UI in your browser:
-- http://localhost:8080/swagger-ui.html
+Open the app and API:
+- Frontend: http://localhost:8081
+- Swagger UI (API docs): http://localhost:8080/swagger-ui.html
 
-## Using Swagger (testing the API)
-Swagger UI is the place where you can try the API without extra tools.
-- You can see all endpoints, their methods (GET, POST, etc.), and paths.
-- It shows the parameters you can send (like page, size, q) and the response codes.
-- It shows the request and response models.
-- You can click “Try it out”, fill the fields, and execute real requests. The response appears on the page.
+Stop everything:
 
-## What the API does
-- Create, read, update, and delete customers.
-- List customers with pagination.
-- Search customers by text (name, last name, email, phone, address).
-- Look up a customer by email or phone.
-
-For details and examples, see Swagger UI.
-
-## Quick examples in Swagger
-- List customers (paged):
-  - Go to GET /api/customers/page
-  - page = 0, size = 5, sort = id,desc
-  - Click “Try it out” and then “Execute”
-- Search customers:
-  - Go to GET /api/customers/search/page
-  - q = john, page = 0, size = 10
-  - Execute and see results
-- Lookup by email:
-  - Go to GET /api/customers/by-email
-  - email = john.doe@example.com
-  - Execute
-
-## Pagination parameters
-- page: starts at 0
-- size: suggested 1..50 (the API caps the size to 50)
-- sort: example `id,desc` or `lastName,asc`
-
-## Database and migrations
-- The app uses Flyway. It runs SQL files from `src/main/resources/db/migration` when the app starts.
-- Current migrations:
-  - `V1__create_customers.sql`: creates the `customer` table and indexes.
-  - `V2__timestamps_defaults.sql`: sets default timestamps and fills missing values.
-  - `V3__fix_customer_id_sequence.sql`: ensures `customer.id` is auto-generated in existing databases (adds a sequence default and sets the next value correctly).
-
-## Error responses (example)
-When something goes wrong, the API returns a JSON like this:
-
-```json
-{
-  "timestamp": "2025-08-10T12:34:56",
-  "path": "/api/customers/999",
-  "status": 404,
-  "error": "Not Found",
-  "message": "Customer not found with ID: 999"
-}
-```
-
-## Run tests
-```bash
-./mvnw test
-```
-
-### Tests and the database (rollback)
-To keep things simple, tests run against the same "dev" database. We do not want test data to stay there.
-- Test classes are annotated with `@Transactional`, so each test runs inside a transaction and Spring rolls it back at the end. That means no customers created by tests will remain in your database.
-- This is the easiest way to keep your DB clean while still testing real behavior.
-- Optional: if you prefer full isolation, create a separate "test" profile (`application-test.properties` + `@ActiveProfiles("test")`) pointing to another database. For this project, the transactional rollback approach is enough.
-
-## Change profile
-By default the app runs with the `dev` profile. To use another profile:
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=prod"
-```
-For `prod`, set environment variables for the database connection (DB_URL, DB_USER, DB_PASSWORD).
-
-## Run with Docker (easy mode)
-
-I added Docker to make it super easy to run the app and database. With Docker:
-- You don't need to install Java or PostgreSQL locally.
-- Everything runs in containers, so it works the same on any computer.
-- Anyone can clone this repo and run it with one command.
-
-### How to use
-1. Make sure Docker and Docker Compose are installed.
-2. In the project folder, run:
-  ```bash
-  docker compose up --build
-  ```
-3. Wait until you see logs saying the app started and migrations finished.
-4. Open Swagger: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-5. You can connect to the database with pgAdmin:
-  - Host: localhost
-  - Port: 5432
-  - User: appuser
-  - Password: apppassword
-  - Database: customerdb
-
-To stop everything:
 ```bash
 docker compose down
 ```
 
-If you only want to build the image (not run):
+## Dev (without Docker)
+
+Requirements: Java 17, Node.js, and a local PostgreSQL server.
+
+1) Backend
+- Edit `backend/src/main/resources/application-dev.properties` with your DB name, user, and password.
+- Create the database (example: `customerdb`).
+- Run the API:
+
 ```bash
-docker build -t customer-app:dev .
+cd backend
+./mvnw spring-boot:run
 ```
 
-### Why Docker?
-- The app and database run together, no setup needed.
-- No more "works on my machine" problems.
-- I can test, develop, and show my project easily.
-- All dependencies and versions are controlled by Docker.
+Swagger UI: http://localhost:8080/swagger-ui.html
 
-If you have problems with ports (like 5432 busy), stop other Postgres servers or change the port in `docker-compose.yml`.
+2) Frontend
+- Set API URL in `frontend/.env`:
+  - `VITE_API_URL=http://localhost:8080/api`
+- Start the dev server:
 
-## Actuator (dev)
-In dev profile we expose basic Actuator endpoints:
-- GET http://localhost:8080/actuator/health
-- GET http://localhost:8080/actuator/info
-- GET http://localhost:8080/actuator/metrics
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Troubleshooting
-- Database connection refused:
-  - Check PostgreSQL is running.
-  - Check the database name, user, and password.
-  - Make sure the database exists and you can connect with another tool.
-- Port 8080 already in use:
-  - Stop the other app using that port, or start this app on another port:
-  ```bash
-  ./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
-  ```
+App (Vite dev): http://localhost:5173
