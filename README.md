@@ -23,9 +23,9 @@ Simple full‑stack app to manage customers. The backend is Spring Boot with Pos
 
 ## Documentation
 
-- Frontend
-  - [Frontend Overview](front/README.md)
-  - [Frontend Documentation](front/docs/)
+ - Frontend
+   - [Frontend Overview](frontend/README.md)
+   - [Frontend Documentation](frontend/docs/)
 
 - Backend
   - [Backend Overview](backend/README.md)

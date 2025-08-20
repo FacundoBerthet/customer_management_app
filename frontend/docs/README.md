@@ -1,6 +1,6 @@
 # Frontend Docs
 
-Detailed documentation for the React app will be organized here. The goal is to keep it practical and easy to follow for junior developers.
+Detailed documentation for the React app will be organized here.
 
 Planned sections:
 - Folder structure
