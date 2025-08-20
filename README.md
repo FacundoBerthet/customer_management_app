@@ -3,6 +3,7 @@
 Simple full‑stack app to manage customers. The backend is Spring Boot with PostgreSQL and Flyway. The frontend is React (Vite) served by Nginx. You can run everything with Docker Compose.
 
 ![Home page](docs/images/home_page.png)
+<small><em>Note: The image above is a screenshot of the frontend application's home page.</em></small>
 
 ## Table of Contents
 

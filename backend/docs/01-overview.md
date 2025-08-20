@@ -1,6 +1,6 @@
 # Overview
 
-This backend is a small, clean REST API built with Spring Boot 3, Spring Data JPA, and PostgreSQL. It exposes CRUD endpoints for customers, with pagination, search, sorting, validation, and consistent error responses. Flyway manages the database schema.
+This backend is a REST API built with Spring Boot 3, Spring Data JPA, and PostgreSQL. It exposes CRUD endpoints for customers, with pagination, search, sorting, validation, and consistent error responses. Flyway manages the database schema.
 
 ## High‑level architecture
 
