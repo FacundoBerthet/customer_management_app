@@ -7,28 +7,28 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "PageResponse", description = "Respuesta paginada con contenido y metadatos")
+@Schema(name = "PageResponse", description = "Response for paginated results")
 public class PageResponse<T> {
 
-    @Schema(description = "Elementos de la página actual")
+    @Schema(description = "Elements of the current page")
     private List<T> content;
 
-    @Schema(description = "Número de página (base 0)", example = "0")
+    @Schema(description = "Page number (0-based)", example = "0")
     private int page;
 
-    @Schema(description = "Tamaño de página", example = "20")
+    @Schema(description = "Page size", example = "20")
     private int size;
 
-    @Schema(description = "Cantidad total de elementos", example = "123")
+    @Schema(description = "Total number of elements", example = "123")
     private long totalElements;
 
-    @Schema(description = "Cantidad total de páginas", example = "7")
+    @Schema(description = "Total number of pages", example = "7")
     private int totalPages;
 
-    @Schema(description = "¿Esta es la primera página?", example = "true")
+    @Schema(description = "Is this the first page?", example = "true")
     private boolean first;
 
-    @Schema(description = "¿Esta es la última página?", example = "false")
+    @Schema(description = "Is this the last page?", example = "false")
     private boolean last;
 
     public PageResponse() {}

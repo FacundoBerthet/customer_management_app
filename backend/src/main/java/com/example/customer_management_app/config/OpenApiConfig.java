@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
     info = @Info(
         title = "Customer Management API",
         version = "v1",
-        description = "API para gestionar clientes: creación, consulta, actualización y eliminación."
+        description = "API for managing customers, including creation, retrieval, update, and deletion."
     ),
     servers = {
-        @Server(url = "http://localhost:8080", description = "Ambiente local")
+        @Server(url = "http://localhost:8080", description = "Local environment")
     }
 )
 public class OpenApiConfig {

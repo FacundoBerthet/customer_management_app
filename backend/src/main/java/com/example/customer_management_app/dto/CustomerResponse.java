@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "CustomerResponse", description = "DTO de salida para representar clientes")
+@Schema(name = "CustomerResponse", description = "DTO for customer responses")
 public class CustomerResponse {
 
     @Schema(description = "Unique identifier of the customer", example = "1")

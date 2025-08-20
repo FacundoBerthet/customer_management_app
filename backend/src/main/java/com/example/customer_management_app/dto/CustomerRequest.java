@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "CustomerRequest", description = "DTO de entrada para crear/actualizar clientes")
+@Schema(name = "CustomerRequest", description = "DTO for customer creation and update")
 public class CustomerRequest {
 
     // Nombre y apellido: mantengo las mismas reglas que en la entidad, pero aquí se validan
