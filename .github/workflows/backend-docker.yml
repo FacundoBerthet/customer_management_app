@@ -1,4 +1,3 @@
----
 name: backend-docker
 
 on:
@@ -9,8 +8,12 @@ on:
       - .github/workflows/backend-docker.yml
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
