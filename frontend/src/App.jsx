@@ -61,8 +61,12 @@ function App() {
     setMenuOpen(false);
   }
 
+  // Basename para GitHub Pages: cuando la app está servida bajo /customer_management_app/
+  const isPages = window.location.hostname.endsWith('github.io');
+  const basename = isPages ? '/customer_management_app' : '/';
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       {/* Alerta inferior fija (toast) */}
       {alert && (
         <div
