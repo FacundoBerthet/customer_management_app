@@ -41,6 +41,8 @@ jobs:
           npm run build
           # Fallback para SPA en GitHub Pages (refresh en rutas internas)
           cp dist/index.html dist/404.html
+          # Evita que GitHub Pages procese Jekyll y reemplace index (protege rutas y assets)
+          touch dist/.nojekyll
           ls -l dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
