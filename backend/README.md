@@ -13,8 +13,6 @@ REST API for managing customers. Built with Spring Boot 3, Spring Data JPA, Bean
 - [Error format](#error-format)
 - [Database and migrations](#database-and-migrations)
 - [Configuration and profiles](#configuration-and-profiles)
-- [Health and observability](#health-and-observability)
-- [Backend documentation](#backend-documentation)
 
 ## Quick Guide
 
@@ -137,4 +135,4 @@ Run with another profile locally:
 - [Database and migrations](docs/06-database-migrations.md)
 - [Configuration and profiles](docs/07-configuration-profiles.md)
 - [Testing](docs/08-testing.md)
-- [Troubleshooting](docs/09-troubleshooting.md)
+- [Deployment with Docker](docs/09-deployment-docker.md)
