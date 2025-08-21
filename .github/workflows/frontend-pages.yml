@@ -43,7 +43,12 @@ jobs:
           npm run build
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
+      - name: Verificar archivos en dist
+        working-directory: frontend
+        run: |
+          echo "Contenido de dist antes de subir artifact:"
           ls -l dist
+          echo "Archivos esperados: index.html, 404.html, .nojekyll, assets/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
