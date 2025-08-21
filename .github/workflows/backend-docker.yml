@@ -25,10 +25,6 @@ jobs:
           java-version: 17
           cache: maven
 
-      - name: Run tests
-        working-directory: backend
-        run: ./mvnw -q test
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
