@@ -2,10 +2,10 @@ name: backend-docker
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master" ]
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-docker.yml'
+      - "backend/**"
+      - ".github/workflows/backend-docker.yml"
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/customer_management_app-backend
+  IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/customer_management_app-backend"
 
 jobs:
   test:
@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: maven
       - name: Maven test
         working-directory: backend
@@ -64,4 +64,4 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.description=Customer Management App backend
       - name: Summary
-        run: echo "Imagen publicada: $IMAGE_NAME:latest"
+        run: echo "Imagen publicada: ${IMAGE_NAME}:latest"
