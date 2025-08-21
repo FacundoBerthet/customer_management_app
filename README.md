@@ -12,6 +12,7 @@ Simple full‑stack app to manage customers. The backend is Spring Boot with Pos
 - [Tiny Quickstart](#tiny-quickstart)
 - [Dev (without Docker)](#dev-without-docker)
 
+
 ## What you can do
 
 - Create, edit, and delete customers
@@ -19,6 +20,26 @@ Simple full‑stack app to manage customers. The backend is Spring Boot with Pos
 - Search customers by name, email, phone, or address
 - View full customer details
 - Try the API in Swagger UI
+
+## Quick Demo
+
+You can try the app online without installing anything:
+
+1. **Start the backend:**
+  - Go to https://customer-management-app-morg.onrender.com/ to wake up the backend.
+  - Wait for the loading screen to finish (the backend may take up to 1 minute to wake up if it was sleeping).
+2. **Open the frontend:**
+  - Go to https://facundoberthet.github.io/customer_management_app/
+  - Use the app normally. All features are available.
+
+**Tip:** If the backend was sleeping, you may get errors in the frontend until it wakes up. Always open the backend link first and wait for the loading screen to finish before using the frontend.
+
+### Demo Hosting Details
+
+- **Frontend:** Hosted on GitHub Pages ([facundoberthet.github.io/customer_management_app](https://facundoberthet.github.io/customer_management_app/))
+- **Backend:** Hosted on Render (free tier, Docker container)
+- **Database:** PostgreSQL on Render
+- **CI/CD:** GitHub Actions for automated deploys
 
 ## Documentation
 
