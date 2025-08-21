@@ -14,7 +14,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Echo context
-        run: |
-          echo "Owner=${{ github.repository_owner }}"
-          echo "Ref=${{ github.ref }}"
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Run tests
+        working-directory: backend
+        run: ./mvnw -q test
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:latest
+            ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.description=Customer Management App backend
+
+      - name: Summary
+        run: echo "Image pushed: ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:latest"
