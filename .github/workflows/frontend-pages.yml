@@ -41,12 +41,8 @@ jobs:
           PAGES: 'true'
         run: |
           npm run build
-          # Fallback para SPA en GitHub Pages (refresh en rutas internas)
           cp dist/index.html dist/404.html
-          # Evita que GitHub Pages procese Jekyll y reemplace index (protege rutas y assets)
           touch dist/.nojekyll
-          echo '--- BASE TAG (debug) ---'
-          grep -n "<base" dist/index.html || echo '(sin base tag)'
           ls -l dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -57,7 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
