@@ -86,21 +86,21 @@ Swagger/OpenAPI
 
 ```mermaid
 flowchart LR
-		subgraph Local Dev
-			IDE[IDE/CLI] --> AppDev[Spring Boot (dev)]
-			AppDev -->|application-dev.properties| ConfigDev[Config]
-			AppDev -->|Local DB| PGDev[(PostgreSQL localhost)]
-		end
+	subgraph Local Dev
+		IDE[IDE/CLI] --> AppDev[Spring Boot (dev)]
+		AppDev -->|application-dev.properties| ConfigDev[Config]
+		AppDev -->|Local DB| PGDev[(PostgreSQL localhost)]
+	end
 
-		subgraph Docker/Prod
-			Compose[docker-compose] --> AppProd[Spring Boot (prod)]
-			Compose -->|DB_URL/DB_USER/DB_PASSWORD| AppProd
-			AppProd -->|application-prod.properties| ConfigProd[Config]
-			AppProd -->|DB service 'db'| PGProd[(PostgreSQL container)]
-		end
+	subgraph Docker/Prod
+		Compose[docker-compose] --> AppProd[Spring Boot (prod)]
+		Compose -->|DB_URL/DB_USER/DB_PASSWORD| AppProd
+		AppProd -->|application-prod.properties| ConfigProd[Config]
+		AppProd -->|DB service 'db'| PGProd[(PostgreSQL container)]
+	end
 
-		classDef db fill:#e8f7ff,stroke:#6ab0de
-		class PGDev,PGProd db
+	classDef db fill:#e8f7ff,stroke:#6ab0de
+	class PGDev,PGProd db
 ```
 
 ## Good practices
