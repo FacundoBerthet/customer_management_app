@@ -37,7 +37,7 @@ jobs:
       - name: Build (GitHub Pages)
         working-directory: frontend
         env:
-          VITE_API_URL: 'https://customer-management-app-morg.onrender.com'
+          VITE_API_URL: 'https://customer-management-app-morg.onrender.com/api'
           PAGES: 'true'
         run: |
           npm run build
