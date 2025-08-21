@@ -538,7 +538,6 @@ body {
   max-width: 700px;
   margin: 3rem auto;
   background: #2c3136;
-  border-radius: 14px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   border: 2px solid #3a3f44;
   padding: 2.5rem;
@@ -607,4 +606,7 @@ body {
   .details-page { margin: 2rem auto; padding: 1.2rem; }
   .details-grid { grid-template-columns: 1fr; }
   .details-label { text-align: left; padding-right: 0; }
+  .edit-customer-page {
+    width: 92%;
+}
 }
