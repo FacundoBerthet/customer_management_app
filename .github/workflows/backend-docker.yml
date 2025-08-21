@@ -2,66 +2,57 @@ name: backend-docker
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master ]
     paths:
-      - "backend/**"
-      - ".github/workflows/backend-docker.yml"
+      - backend/**
+      - .github/workflows/backend-docker.yml
   workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
 
-concurrency:
-  group: backend-docker
-  cancel-in-progress: true
-
-env:
-  IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/customer_management_app-backend"
-
 jobs:
-  test:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: 17
           cache: maven
-      - name: Maven test
+
+      - name: Run tests
         working-directory: backend
         run: ./mvnw -q test
 
-  docker:
-    needs: test
-    if: ${{ github.repository_owner == 'FacundoBerthet' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Login to GHCR
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Docker Buildx
+
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build and push image
+
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:latest
+            ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.description=Customer Management App backend
+
       - name: Summary
-        run: echo "Imagen publicada: ${IMAGE_NAME}:latest"
+        run: echo "Image pushed: ghcr.io/${{ github.repository_owner }}/customer_management_app-backend:latest"
