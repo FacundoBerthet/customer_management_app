@@ -8,6 +8,7 @@ Simple full‑stack app to manage customers. The backend is Spring Boot with Pos
 ## Table of Contents
 
 - [What you can do](#what-you-can-do)
+- [Quick Demo](#quick-demo)
 - [Documentation](#documentation)
 - [Tiny Quickstart](#tiny-quickstart)
 - [Dev (without Docker)](#dev-without-docker)
