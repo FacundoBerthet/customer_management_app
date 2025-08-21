@@ -28,10 +28,10 @@ Diagram of resolution flow
 
 ```mermaid
 flowchart TB
-		A[Command-line args / System properties] --> R[Resolved config]
-		B[Environment variables] --> R
-		C[application-{profile}.properties] --> R
-		D[application.properties] --> R
+	A["Command-line args / System properties"] --> R["Resolved config"]
+	B["Environment variables"] --> R
+	C["application-{profile}.properties"] --> R
+	D["application.properties"] --> R
 ```
 
 ## Activating profiles
